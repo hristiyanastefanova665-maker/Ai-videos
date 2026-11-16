@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Hristiyana Creative – 20s commercial</title>
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/500.css">
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/800.css">
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/900.css">
+<link rel="stylesheet" href="node_modules/@fontsource/playfair-display/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/playfair-display/500.css">
+<link rel="stylesheet" href="node_modules/@fontsource/playfair-display/700-italic.css">
+<style>
+:root{--k:#111111;--i:#F5F1E9;--g:#B9B4AC;--l:#A78BFA;--back:#E2DCD0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;background:var(--k);overflow:hidden;font-family:Montserrat,sans-serif}
+#cam,.layer{position:absolute;inset:0}
+.abs{position:absolute;left:0;top:0}
+.mask{display:block;overflow:hidden;line-height:1.22;white-space:nowrap}
+.mask>span{display:inline-block;white-space:nowrap}
+.big{font-weight:900;letter-spacing:-.01em}
+.ch{display:inline-block}
+img{display:block}
+.shadow{filter:drop-shadow(0 30px 40px rgba(0,0,0,.35))}
+
+/* S1 paper */
+#paper{left:110px;top:350px;width:860px;height:1220px;background:var(--i)}
+#paper .txt{position:absolute;left:70px;top:330px;width:720px;color:var(--k)}
+#paper .rule{position:absolute;left:70px;width:720px;height:2px;background:var(--k)}
+#sq{position:absolute;left:70px;top:150px;width:34px;height:34px;background:var(--l)}
+#strike{position:absolute;left:-14px;width:748px;height:14px;background:var(--l);transform-origin:0 50%}
+.geo{position:absolute}
+
+/* fold */
+.persp{perspective:2400px;perspective-origin:540px 960px}
+.fold{position:absolute;transform-style:preserve-3d}
+.fold .half{position:absolute;left:0;width:100%;height:50%;transform-style:preserve-3d}
+.fold .half.t{top:0}
+.fold .half.b{top:50%;transform-origin:50% 0}
+.fold .q{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d}
+.fold .q.l{left:0}
+.fold .q.r{left:50%;transform-origin:0 50%}
+.fold .face{position:absolute;inset:0;backface-visibility:hidden;background-repeat:no-repeat}
+.fold .face.bk{transform:rotateY(180deg);background:linear-gradient(135deg,#ECE7DC,#D6CFC1)}
+#foldA{left:110px;top:350px;width:860px;height:1220px}
+#foldB,#carFlat{left:160px;top:330px;width:760px;height:1076px}
+#carFlat img{width:100%;height:100%}
+#t2{left:0;top:1500px;width:1080px;text-align:center;color:var(--i);font-size:104px}
+#t2 .mask{display:inline-block;margin:0 .12em}
+#t2 i{font-style:normal;color:var(--l)}
+
+/* S3 */
+.card{position:absolute;left:190px;top:410px;width:700px;height:980px;overflow:hidden;background:#fff}
+.card img{width:103%;height:103%;margin:-1.5% 0 0 -1.5%}
+#p1wrap{position:absolute;left:190px;top:410px;width:700px;height:980px}
+#p1wrap .card{left:0;top:0}
+.bg{position:absolute;inset:0}
+#ticks{left:310px;top:1760px;width:460px;height:6px;display:flex;gap:20px}
+#ticks b{flex:1;background:#8A8782;position:relative;overflow:hidden}
+#ticks b u{position:absolute;inset:0;background:var(--l);transform-origin:0 50%}
+#portrait{background:#DAD6CF}
+#scan{left:150px;top:410px;width:780px;height:6px;background:var(--l);box-shadow:0 0 30px 6px rgba(167,139,250,.6)}
+#inv{position:absolute;left:230px;top:466px;width:620px;height:868px;background:var(--i)}
+#inv svg,.inv svg{position:absolute;inset:0}
+.inv .ttl{position:absolute;left:0;top:300px;width:100%;text-align:center;font-family:'Playfair Display',serif;font-weight:400;font-size:74px;letter-spacing:.2em;padding-left:.2em;color:var(--k)}
+.inv .bar{position:absolute;height:3px;background:#C9C3B8;left:50%}
+#slot{left:140px;top:612px;width:800px;height:12px;border-radius:6px;background:var(--k)}
+#p4top{position:absolute;left:0;top:0;width:1080px;height:618px;overflow:hidden}
+#p4bot{position:absolute;left:0;top:618px;width:1080px;height:1302px;overflow:hidden}
+.pr{position:absolute;left:220px;width:640px;height:520px}
+#digital{top:0}
+#print{top:-618px;background:#fff;padding:26px 26px 26px}
+#print svg,#digital svg{display:block;width:100%;height:100%}
+#digital .tint{position:absolute;inset:0;background:var(--l);mix-blend-mode:color;opacity:.9}
+
+/* S4 */
+.cc{position:absolute;left:0;top:0;overflow:hidden;background:#fff;box-shadow:0 24px 50px rgba(17,17,17,.28)}
+.cc img{width:103%;height:103%;margin:-1.5% 0 0 -1.5%}
+#t4a{left:60px;top:150px;width:960px;color:var(--k)}
+#t4b{left:60px;top:1610px;width:960px;color:var(--k);font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+#u4{left:60px;top:1778px;width:960px;height:8px;background:var(--l);transform-origin:0 50%}
+.vline{position:absolute;top:0;width:1px;height:1920px;background:rgba(17,17,17,.14)}
+
+/* S5 */
+#s5{color:var(--i)}
+#brand{left:0;top:812px;width:1080px;text-align:center;font-family:'Playfair Display',serif;font-weight:500;font-size:108px;letter-spacing:.17em;padding-left:.17em}
+#brand .mask{line-height:1.3}
+#sub{left:0;top:968px;width:1080px;display:flex;align-items:center;justify-content:center;gap:34px;font-weight:500;font-size:40px;letter-spacing:.62em}
+#sub span{padding-left:.62em}
+#sub i{display:block;width:120px;height:1.5px;background:var(--i);opacity:.7}
+#tag{left:0;top:1150px;width:1080px;text-align:center;font-weight:500;font-size:33px;letter-spacing:.2em;padding-left:.2em}
+#tag .mask{display:inline-block;margin:0 .22em}
+#tag .lv{color:var(--l)}
+#dot{left:528px;top:948px;width:24px;height:24px;border-radius:50%;background:var(--l)}
+#ring{left:440px;top:860px;width:200px;height:200px;border-radius:50%;border:3px solid var(--l)}
+#swoosh{left:0;top:0}
+#grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:overlay;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="cam">
+
+  <!-- ============ SCENE 1 ============ -->
+  <div class="layer" id="s1">
+    <div class="abs" id="paper">
+      <div id="sq"></div>
+      <div class="rule" style="top:240px" id="r1"></div>
+      <div class="rule" style="top:1010px" id="r2"></div>
+      <div class="txt big">
+        <span class="mask" id="l1"><span>ОЩЕ ЕДИН</span></span>
+        <span class="mask" id="l2" style="overflow:visible;position:relative"><span id="word">ОБИКНОВЕН</span><div id="strike"></div></span>
+        <span class="mask" id="l3"><span>ПОДАРЪК?</span></span>
+      </div>
+      <div id="geos"></div>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 2 ============ -->
+  <div class="layer persp" id="s2">
+    <div class="fold" id="foldA"></div>
+    <div class="fold" id="foldB"></div>
+    <div class="abs shadow" id="carFlat"><img src="assets/car.png"></div>
+    <div class="abs big" id="t2">
+      <span class="mask"><span>НЕ</span></span><span class="mask"><span>И</span></span><span class="mask"><span>ТОЗИ</span></span><span class="mask"><span>ПЪТ<i>.</i></span></span>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 3 ============ -->
+  <div class="layer" id="p1">
+    <div id="p1wrap" class="shadow"><div class="card" id="wedCard"><img src="assets/wedding.jpg"></div></div>
+  </div>
+
+  <div class="layer" id="p2">
+    <div class="bg" style="background:var(--i)"></div>
+    <div id="p2c" class="layer">
+      <div class="card shadow" id="portrait" style="overflow:visible;background:none">
+        <div class="card" style="left:0;top:0;background:#DAD6CF">
+          <svg viewBox="0 0 700 980" width="700" height="980">
+            <rect x="40" y="40" width="620" height="900" fill="none" stroke="#C4BFB6" stroke-width="2"/>
+            <circle cx="350" cy="400" r="150" fill="#BEB9B0"/>
+            <path d="M70 940 C70 700 210 610 350 610 C490 610 630 700 630 940 Z" fill="#BEB9B0"/>
+          </svg>
+        </div>
+        <div class="card" id="caricCard" style="left:0;top:0"><img src="assets/caric.jpg"></div>
+      </div>
+      <div class="abs" id="scan"></div>
+    </div>
+  </div>
+
+  <div class="layer" id="p3">
+    <div class="bg" style="background:var(--k)"></div>
+    <div id="inv" class="inv shadow">
+      <svg viewBox="0 0 620 868" fill="none">
+        <path id="arch" d="M70 800 V330 A240 240 0 0 1 550 330 V800 Z" stroke="#111" stroke-width="2"/>
+        <path id="arch2" d="M88 782 V330 A222 222 0 0 1 532 330 V782 Z" stroke="#A78BFA" stroke-width="1.5"/>
+        <path id="heart" transform="translate(310 196)" d="M0 26 C-34 4 -30 -26 -12 -26 C-4 -26 0 -18 0 -14 C0 -18 4 -26 12 -26 C30 -26 34 4 0 26 Z" stroke="#A78BFA" stroke-width="2.5"/>
+        <path id="spark" transform="translate(310 690)" d="M0-20C2-6 6-2 20 0C6 2 2 6 0 20C-2 6-6 2-20 0C-6-2-2-6 0-20Z" fill="#A78BFA"/>
+      </svg>
+      <div class="ttl"><span class="mask"><span id="invT">ПОКАНА</span></span></div>
+      <div class="bar" style="top:440px;width:120px;margin-left:-60px;background:#111;height:2px"></div>
+      <div class="bar" style="top:500px;width:300px;margin-left:-150px"></div>
+      <div class="bar" style="top:532px;width:240px;margin-left:-120px"></div>
+      <div class="bar" style="top:564px;width:270px;margin-left:-135px"></div>
+    </div>
+  </div>
+
+  <div class="layer" id="p4">
+    <div class="bg" style="background:var(--i)"></div>
+    <div class="vline" style="left:60px"></div><div class="vline" style="left:1020px"></div>
+
+    <!-- collage (scene 4) -->
+    <div class="layer" id="collage">
+      <div class="abs" id="disc" style="width:580px;height:580px;border-radius:50%;background:var(--l)"></div>
+      <div class="abs" id="ringK" style="width:300px;height:300px;border-radius:50%;border:3px solid var(--k)"></div>
+      <div class="abs" id="sqK" style="display:none;width:90px;height:90px;background:var(--k)"></div>
+      <div class="cc" id="cCar" style="width:400px;height:566px"><img src="assets/car.png" style="width:100%;height:100%;margin:0"></div>
+      <div class="cc" id="cCaric" style="width:390px;height:546px"><img src="assets/caric.jpg"></div>
+      <div class="cc" id="cWed" style="width:370px;height:518px"><img src="assets/wedding.jpg"></div>
+      <div class="cc inv" id="cInv" style="width:620px;height:868px;overflow:visible"></div>
+    </div>
+
+    <div id="p4top"><div class="pr" id="digital"><div id="photoSrc">
+      <svg viewBox="0 0 588 468" preserveAspectRatio="xMidYMid slice">
+        <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6D5BD0"/><stop offset=".45" stop-color="#A78BFA"/><stop offset=".8" stop-color="#F3D9CF"/><stop offset="1" stop-color="#F5F1E9"/></linearGradient></defs>
+        <rect width="588" height="468" fill="url(#sky)"/>
+        <circle cx="400" cy="250" r="62" fill="#F5F1E9"/>
+        <path d="M0 330 C90 270 170 300 250 320 C330 340 420 270 588 310 V468 H0Z" fill="#5B479E"/>
+        <path d="M0 370 C120 330 200 390 320 360 C430 332 500 380 588 350 V468 H0Z" fill="#33265F"/>
+        <path d="M0 420 C140 380 260 440 380 410 C470 388 540 420 588 405 V468 H0Z" fill="#111111"/>
+      </svg></div><div class="tint"></div></div></div>
+    <div id="p4bot"><div class="pr shadow" id="print"></div></div>
+    <div class="abs" id="slot"></div>
+
+    <div class="abs big" id="t4a"><span class="mask"><span>ИДЕИТЕ ТИ.</span></span></div>
+    <div class="abs" id="t4b"><span class="mask" style="line-height:1.35"><span>НАШИЯТ ДИЗАЙН.</span></span></div>
+    <div class="abs" id="u4"></div>
+  </div>
+
+  <div class="abs" id="ticks"><b><u></u></b><b><u></u></b><b><u></u></b><b><u></u></b></div>
+
+  <!-- ============ SCENE 5 ============ -->
+  <div class="layer" id="s5">
+    <div class="abs" id="ring"></div>
+    <div class="abs" id="dot"></div>
+    <div class="abs" id="brand"><span class="mask"><span id="brandT">HRISTIYANA</span></span></div>
+    <div class="abs" id="sub"><i></i><span>CREATIVE</span><i></i></div>
+    <div class="abs" id="tag">
+      <span class="mask"><span>НЕ</span></span><span class="mask"><span>ПРОСТО</span></span><span class="mask"><span>ДИЗАЙН.</span></span><span class="mask lv"><span>НЕЩО</span></span><span class="mask lv"><span>ЛИЧНО.</span></span>
+    </div>
+    <svg class="abs" id="swoosh" width="1080" height="1920" viewBox="0 0 1080 1920" fill="none">
+      <path id="sw" d="M250 1262 C420 1236 660 1236 830 1262" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+      <path id="star" transform="translate(952 790)" d="M0-30C3-9 9-3 30 0C9 3 3 9 0 30C-3 9-9 3-30 0C-9-3-3-9 0-30Z" fill="#A78BFA"/>
+      <path id="star2" transform="translate(988 838) scale(.4)" d="M0-30C3-9 9-3 30 0C9 3 3 9 0 30C-3 9-9 3-30 0C-9-3-3-9 0-30Z" fill="#A78BFA"/>
+    </svg>
+  </div>
+</div>
+<svg id="grain" width="1080" height="1920"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+</div>
+
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function fit(el,w){el.style.fontSize='100px';const r=el.getBoundingClientRect().width;el.style.fontSize=(100*w/r)+'px';}
+function split(el){const t=el.textContent;el.textContent='';return [...t].map(c=>{const s=document.createElement('span');s.className='ch';s.textContent=c;el.appendChild(s);return s;});}
+function makeFold(el,img,w,h,color){
+  const q=(cls,x,y)=>`<div class="q ${cls}"><div class="face" style="${img?`background-image:url(${img});background-size:${w}px ${h}px;background-position:${-x}px ${-y}px`:`background:${color}`}"></div><div class="face bk"></div></div>`;
+  el.innerHTML=`<div class="half t">${q('l',0,0)}${q('r',w/2,0)}</div><div class="half b">${q('l',0,h/2)}${q('r',w/2,h/2)}</div>`;
+  return {b:el.querySelector('.half.b'),tr:el.querySelector('.half.t .q.r'),br:el.querySelector('.half.b .q.r')};
+}
+
+async function build(){
+  await Promise.all([
+    document.fonts.load('900 100px Montserrat','ОЩЕ ЕДИН ОБИКНОВЕН ПОДАРЪК? НЕ И ТОЗИ ПЪТ. ИДЕИТЕ'),
+    document.fonts.load('500 30px Montserrat','НЕ ПРОСТО ДИЗАЙН. НЕЩО ЛИЧНО. CREATIVE'),
+    document.fonts.load('500 100px "Playfair Display"','HRISTIYANA'),
+    document.fonts.load('400 100px "Playfair Display"','ПОКАНА'),
+    document.fonts.load('italic 700 100px "Playfair Display"','НАШИЯТ ДИЗАЙН.'),
+  ]);
+  await document.fonts.ready;
+  await Promise.all($$('img').map(i=>i.decode?i.decode().catch(()=>{}):0));
+
+  // ---------- setup ----------
+  ['#l1>span','#word','#l3>span'].forEach(s=>fit($(s),720));
+  fit($('#t4a .mask>span'),960); fit($('#t4b .mask>span'),952);
+  $('#strike').style.top='52%';
+  const letters=split($('#word'));
+  const brandL=split($('#brandT'));
+  // print = white-bordered copy of the photo; collage invitation = finished copy
+  $('#print').innerHTML=$('#photoSrc').innerHTML;
+  $('#cInv').innerHTML=$('#inv').innerHTML; $('#cInv').style.background='var(--i)';
+  $$('#cInv [id]').forEach(e=>e.removeAttribute('id'));
+
+  // geometric fragments for the broken word
+  const L='#A78BFA',K='#111111';
+  const geoDefs=[
+    ['circle',70,L,-250,-150],['tri',80,K,-90,-200],['square',54,K,150,-170],['ring',90,K,290,-110],
+    ['half',84,L,-300,150],['bar',120,K,-60,190],['circle',40,K,120,170],['tri',64,L,300,160]];
+  const geos=geoDefs.map(([t,s,c,x,y])=>{const d=document.createElement('div');d.className='geo';
+    d.style.cssText=`left:${430-s/2}px;top:${590-s/2}px;width:${s}px;height:${s}px;`+
+      (t==='circle'?`border-radius:50%;background:${c}`:t==='square'?`background:${c}`:t==='ring'?`border-radius:50%;border:8px solid ${c}`:
+       t==='half'?`border-radius:${s}px ${s}px 0 0;height:${s/2}px;background:${c}`:t==='bar'?`height:12px;background:${c}`:
+       `background:${c};clip-path:polygon(50% 0,100% 100%,0 100%)`);
+    $('#geos').appendChild(d);return {d,x,y};});
+
+  const fA=makeFold($('#foldA'),null,860,1220,'#F5F1E9');
+  const fB=makeFold($('#foldB'),'assets/car.png',760,1076);
+
+  gsap.defaults({ease:'power3.out',duration:.5});
+  const tl=gsap.timeline({paused:true});
+  const S=(t,v)=>gsap.set(t,v);
+  const hide=s=>S(s,{autoAlpha:0}), showAt=(s,t)=>tl.set(s,{autoAlpha:1},t), hideAt=(s,t)=>tl.set(s,{autoAlpha:0},t);
+
+  // initial visibility
+  ['#foldA','#foldB','#carFlat','#p1','#p2','#p3','#p4','#s5','#ticks'].forEach(hide);
+
+  // ================= SCENE 1  (0 – 3.25) =================
+  S('#paper',{scale:0,rotation:-12});
+  S('#l1>span',{xPercent:-110}); S('#word',{xPercent:0}); S(letters,{yPercent:120,opacity:0}); S('#l3>span',{xPercent:110});
+  S(['#r1','#r2'],{scaleX:0,transformOrigin:'0 50%'}); S('#sq',{scale:0}); S('#strike',{scaleX:0});
+  S(geos.map(g=>g.d),{scale:0});
+  tl.to('#paper',{scale:.16,rotation:0,duration:.3,ease:'back.out(2.2)'},.18)
+    .to('#paper',{scale:1,duration:.5,ease:'expo.inOut'},.48)
+    .to('#l1>span',{xPercent:0,duration:.45,ease:'expo.out'},.9)
+    .to(letters,{yPercent:0,opacity:1,duration:.4,stagger:.025,ease:'expo.out'},1.02)
+    .to('#l3>span',{xPercent:0,duration:.45,ease:'expo.out'},1.16)
+    .to(['#r1','#r2'],{scaleX:1,duration:.7,stagger:.1,ease:'expo.inOut'},.95)
+    .to('#sq',{scale:1,rotation:90,duration:.5,ease:'back.out(2)'},1.2)
+    .to('#strike',{scaleX:1,duration:.75,ease:'power2.inOut'},1.55)
+    .to('#cam',{scale:1.05,duration:1.5,ease:'sine.inOut'},.95);
+  // break apart at 2.4
+  const jx=[-34,-22,-16,-6,0,8,18,24,36], jy=[-30,26,-14,34,-36,20,-24,32,-18], jr=[-18,12,-9,22,-14,17,-24,10,20];
+  tl.to('#strike',{scaleY:0,duration:.12,ease:'power2.in'},2.32);
+  letters.forEach((c,i)=>{
+    tl.to(c,{x:jx[i],y:jy[i],rotation:jr[i],duration:.36,ease:'back.out(2.4)'},2.4);
+    if(i%2===1) tl.set(c,{color:'transparent',webkitTextStroke:'3px #111'},2.4);
+    if(i===0||i===6) tl.set(c,{color:'#A78BFA'},2.4);
+    tl.to(c,{y:jy[i]+900+i*37%160,x:jx[i]*5,rotation:jr[i]*6,duration:.45,ease:'power2.in'},2.72+ (i*3%9)*.02);
+  });
+  geos.forEach((g,i)=>{
+    tl.to(g.d,{scale:1,x:g.x,y:g.y,rotation:(i%2?1:-1)*(40+i*17),duration:.45,ease:'back.out(1.8)'},2.4+i*.012)
+      .to(g.d,{x:g.x*2.6,y:g.y*2.6,scale:0,rotation:'+=140',duration:.42,ease:'power2.in'},2.78+i*.02);
+  });
+  tl.to('#l1>span',{xPercent:-110,duration:.35,ease:'power3.in'},2.8)
+    .to('#l3>span',{xPercent:110,duration:.35,ease:'power3.in'},2.85)
+    .to(['#r1','#r2'],{scaleX:0,transformOrigin:'100% 50%',duration:.3,ease:'power3.in'},2.85)
+    .to('#sq',{scale:0,duration:.25,ease:'power2.in'},2.9)
+    .to('#cam',{scale:1,duration:.5,ease:'power2.inOut'},2.75);
+
+  // ================= SCENE 2  (3.25 – 6.1) =================
+  const T2=3.24;
+  hideAt('#paper',T2); showAt('#foldA',T2);
+  S('#foldA',{transformOrigin:'25% 25%'});
+  tl.to(fA.b,{rotationX:178,duration:.3,ease:'power2.inOut'},T2)
+    .to(fA.tr,{rotationY:-178,duration:.28,ease:'power2.inOut'},T2+.27)
+    .to(fA.br,{rotationY:178,duration:.28,ease:'power2.inOut'},T2+.27)
+    .to('#foldA',{x:215,y:305,rotationZ:-10,rotationX:14,duration:.6,ease:'power2.inOut'},T2)
+    .to('#foldA',{scale:.9,rotationY:90,rotationZ:-22,duration:.26,ease:'power2.in'},3.82);
+  // swap to poster packet
+  hideAt('#foldA',4.08); showAt('#foldB',4.08);
+  S('#foldB',{transformOrigin:'25% 25%',x:190,y:361,rotationY:-90,rotationZ:18,rotationX:14,scale:1.02});
+  const fBhid=[fB.tr.querySelector('.face'),fB.br.querySelector('.face')]; S(fBhid,{autoAlpha:0}); tl.set(fBhid,{autoAlpha:1},4.5);
+  S(fB.b,{rotationX:178}); S(fB.tr,{rotationY:-178}); S(fB.br,{rotationY:178});
+  tl.to('#foldB',{rotationY:-18,rotationZ:6,duration:.22,ease:'power2.out'},4.08)
+    .to([fB.tr],{rotationY:0,duration:.26,ease:'power3.inOut'},4.28)
+    .to([fB.br],{rotationY:0,duration:.26,ease:'power3.inOut'},4.28)
+    .to(fB.b,{rotationX:0,duration:.28,ease:'power3.inOut'},4.47)
+    .to('#foldB',{x:0,y:0,duration:.45,ease:'power2.inOut'},4.28)
+    .set('#foldB',{transformOrigin:'50% 50%'},4.74)
+    .to('#foldB',{rotationY:-360,rotationX:0,rotationZ:0,scale:1,duration:.36,ease:'power2.inOut'},4.72);
+  hideAt('#foldB',5.08); showAt('#carFlat',5.08);
+  tl.fromTo('#carFlat',{scale:1.06},{scale:1,duration:.5,ease:'back.out(2.5)'},5.08)
+    .fromTo('#cam',{scale:1.03},{scale:1,duration:.45,ease:'power2.out',immediateRender:false},5.08);
+  S('#t2 .mask>span',{yPercent:115});
+  tl.to('#t2 .mask>span',{yPercent:0,duration:.34,ease:'expo.out',stagger:.115},5.16)
+    .to('#carFlat',{y:-14,duration:.9,ease:'sine.inOut'},5.25);
+
+  // ================= SCENE 3  (6.1 – 10.7) =================
+  // P1: photo -> photo poster (black bg)
+  tl.to('#carFlat',{y:-1700,rotation:-8,duration:.42,ease:'power3.in'},6.08)
+    .to('#t2 .mask>span',{yPercent:-115,duration:.28,ease:'power3.in',stagger:.03},6.06);
+  showAt('#p1',6.1); showAt('#ticks',6.1);
+  S('#ticks b u',{scaleX:0});
+  S('#ticks',{opacity:0});
+  tl.to('#ticks',{opacity:1,duration:.3},6.2);
+  const clip0='inset(43.2% 34% 30% 36.4% round 14px)', clip1='inset(0% 0% 0% 0% round 0px)';
+  S('#wedCard',{clipPath:clip0});
+  S('#p1wrap',{scale:2.3,x:-2.3*10,y:1500,rotation:10});
+  tl.to('#p1wrap',{y:-2.3*65,rotation:-3,duration:.42,ease:'expo.out'},6.18)
+    .to('#ticks b:nth-child(1) u',{scaleX:1,duration:.4},6.2)
+    .to('#p1wrap',{scale:1,x:0,y:0,rotation:0,duration:.5,ease:'expo.inOut'},6.5)
+    .to('#wedCard',{clipPath:clip1,duration:.5,ease:'expo.inOut'},6.5)
+    .to('#p1wrap',{scale:1.035,duration:.5,ease:'none'},7.0);
+
+  // P2: portrait -> caricature (ivory bg, wipe from bottom)
+  showAt('#p2',7.14);
+  S('#p2',{clipPath:'inset(100% 0% 0% 0%)'}); S('#caricCard',{clipPath:'inset(0% 0% 100% 0%)'}); S('#scan',{autoAlpha:0});
+  S('#portrait',{y:260,rotation:5});
+  tl.to('#p2',{clipPath:'inset(0% 0% 0% 0%)',duration:.36,ease:'expo.inOut'},7.14)
+    .to('#p1wrap',{y:-220,duration:.36,ease:'power2.in'},7.14)
+    .to('#portrait',{y:0,rotation:0,duration:.42,ease:'expo.out'},7.24)
+    .to('#ticks b:nth-child(2) u',{scaleX:1,duration:.4},7.2)
+    .set('#scan',{autoAlpha:1},7.5)
+    .fromTo('#scan',{y:0},{y:980,duration:.36,ease:'power2.inOut'},7.5)
+    .to('#caricCard',{clipPath:'inset(0% 0% 0% 0%)',duration:.36,ease:'power2.inOut'},7.5)
+    .to('#scan',{autoAlpha:0,duration:.08},7.86)
+    .fromTo('#portrait',{scale:1.04},{scale:1,duration:.4,ease:'back.out(2)',immediateRender:false},7.86);
+
+  // P3: blank sheet -> invitation (black bg, circle wipe)
+  showAt('#p3',8.16);
+  S('#p3',{clipPath:'circle(0% at 50% 47%)'});
+  const arch=$('#arch'),arch2=$('#arch2'),heart=$('#heart');
+  [arch,arch2,heart].forEach(p=>{const n=p.getTotalLength();S(p,{strokeDasharray:n,strokeDashoffset:n});});
+  S('#spark',{scale:0,transformOrigin:'50% 50%'}); S('#invT',{yPercent:115}); S('#inv .bar',{scaleX:0});
+  S('#inv',{y:900,rotation:-14});
+  tl.to('#p3',{clipPath:'circle(80% at 50% 47%)',duration:.4,ease:'power3.inOut'},8.16)
+    .to('#inv',{y:0,rotation:0,duration:.45,ease:'expo.out'},8.2)
+    .to('#ticks b:nth-child(3) u',{scaleX:1,duration:.4},8.25)
+    .to(arch,{strokeDashoffset:0,duration:.55,ease:'power2.inOut'},8.5)
+    .to(arch2,{strokeDashoffset:0,duration:.55,ease:'power2.inOut'},8.58)
+    .to(heart,{strokeDashoffset:0,duration:.35,ease:'power2.inOut'},8.62)
+    .to('#invT',{yPercent:0,duration:.4,ease:'expo.out'},8.62)
+    .to('#inv .bar',{scaleX:1,duration:.35,stagger:.05,ease:'expo.out'},8.74)
+    .to('#spark',{scale:1,rotation:180,duration:.4,ease:'back.out(3)'},8.9)
+    .to('#inv',{scale:1.03,duration:.35,ease:'none'},8.95);
+
+  // P4: photo -> print (ivory bg, wipe from right)
+  showAt('#p4',9.26);
+  S('#p4',{clipPath:'inset(0% 0% 0% 100%)'});
+  S(['#collage','#t4a','#t4b','#u4'],{autoAlpha:0});
+  S('#slot',{scaleX:0}); S(['#digital','#print'],{y:-560});
+  tl.to('#p4',{clipPath:'inset(0% 0% 0% 0%)',duration:.34,ease:'expo.inOut'},9.26)
+    .to('#inv',{x:-200,duration:.34,ease:'power2.in'},9.26)
+    .to('#slot',{scaleX:1,duration:.35,ease:'expo.out'},9.36)
+    .to('#ticks b:nth-child(4) u',{scaleX:1,duration:.4},9.36)
+    .to(['#digital','#print'],{y:60,duration:.3,ease:'expo.out'},9.44)
+    .to(['#digital','#print'],{y:690,duration:.5,ease:'power3.inOut'},9.68)
+    .set('#p4bot',{overflow:'visible'},10.18).set('#digital',{autoAlpha:0},10.18)
+    .to('#slot',{scaleX:0,duration:.3,ease:'power3.in'},10.16)
+    .to('#print',{y:640,rotation:-4,scale:1.12,duration:.45,ease:'back.out(1.8)'},10.2);
+
+  hideAt(['#s1','#s2'],6.6); hideAt('#p1',7.6); hideAt('#p2',8.7); hideAt('#p3',9.7);
+  // ================= SCENE 4  (10.7 – 16.2) =================
+  const cards=[['#cCar',300,800,-6,-700,700,-40],['#cCaric',772,772,5,1700,500,35],['#cWed',398,1290,4,300,2500,-25],['#cInv',802,1272,-7,1500,2300,30]];
+  showAt('#collage',10.6);
+  S('.cc',{xPercent:-50,yPercent:-50}); S('#cInv',{scale:.5});
+  S('#disc',{xPercent:-50,yPercent:-50,x:650,y:1010,scale:0});
+  S('#ringK',{xPercent:-50,yPercent:-50,x:170,y:1420,scale:0});
+  S('#sqK',{xPercent:-50,yPercent:-50,x:960,y:520,scale:0,rotation:45});
+  tl.to('#ticks',{opacity:0,duration:.25},10.6)
+    .to('#print',{x:20,scale:.55,rotation:-3,duration:.55,ease:'expo.inOut'},10.68)
+    .to('#disc',{scale:1,duration:.6,ease:'expo.out'},10.72);
+  // print: target centre (560,1030): element centre = left 220+320 + x, top (618-618)+260 + y  -> x=20, y=770
+  tl.to('#print',{y:770,duration:.55,ease:'expo.inOut'},10.68);
+  cards.forEach(([s,x,y,r,fx,fy,fr],i)=>{
+    S(s,{x:fx,y:fy,rotation:fr});
+    tl.to(s,{x,y,rotation:r,duration:.6,ease:'expo.out'},10.74+i*.14)
+      .to(s,{y:y+(i%2?-16:16),rotation:r+(i%2?1.4:-1.4),duration:4.5,ease:'none'},11.6);
+  });
+  showAt('#t4a',11.1); S('#t4a .mask>span',{yPercent:115});
+  tl.to('#t4a .mask>span',{yPercent:0,duration:.45,ease:'expo.out'},11.14)
+    .to('#ringK',{scale:1,duration:.5,ease:'back.out(2)'},11.88)
+    .to('#sqK',{scale:1,rotation:0,duration:.5,ease:'back.out(2)'},12.0)
+    .to('#disc',{x:600,y:980,duration:1.2,ease:'sine.inOut'},11.9)
+    // inhale in the silence, slam on the bass
+    .to('#collage',{scale:.955,transformOrigin:'540px 1020px',duration:.5,ease:'power2.inOut'},12.98)
+    .to('#collage',{scale:1,duration:.5,ease:'back.out(3)'},13.52);
+  showAt('#t4b',13.5); S('#t4b .mask>span',{yPercent:115}); showAt('#u4',13.5); S('#u4',{scaleX:0});
+  tl.to('#t4b .mask>span',{yPercent:0,duration:.42,ease:'expo.out'},13.52)
+    .to('#u4',{scaleX:1,duration:.6,ease:'expo.inOut'},13.62)
+    .fromTo('#cam',{scale:1.025},{scale:1,duration:.5,ease:'power2.out',immediateRender:false},13.52)
+    .to('#disc',{scale:1.12,duration:.3,ease:'back.out(3)'},13.52)
+    .to('#sqK',{rotation:90,duration:.5,ease:'back.out(2)'},14.78)
+    .to('#disc',{x:680,y:1040,scale:1,duration:.7,ease:'power3.inOut'},14.78)
+    .to('#ringK',{x:200,y:1440,scale:1.2,duration:.6,ease:'back.out(2)'},14.78)
+    .to('#sqK',{rotation:180,duration:.5,ease:'back.out(2)'},15.78)
+    .to('#ringK',{scale:1,duration:.5,ease:'back.out(2)'},15.78)
+    .to('#collage',{scale:1.03,duration:.35,ease:'back.out(3)'},15.78)
+    .to('#cam',{scale:1.03,duration:2.6,ease:'sine.inOut'},13.6);
+
+  // ================= SCENE 5  (16.2 – 20) =================
+  tl.to('#t4a .mask>span',{yPercent:-115,duration:.3,ease:'power3.in'},16.16)
+    .to('#t4b .mask>span',{yPercent:115,duration:.3,ease:'power3.in'},16.16)
+    .to('#u4',{scaleX:0,transformOrigin:'100% 50%',duration:.3,ease:'power3.in'},16.16)
+    .set('#p4',{clipPath:'circle(125% at 50% 50%)'},16.2)
+    .to('#p4',{clipPath:'circle(0% at 50% 50%)',duration:.62,ease:'power3.in'},16.3)
+    .to('#cam',{scale:1,duration:.6,ease:'power2.inOut'},16.2);
+  cards.forEach(([s],i)=>tl.to(s,{x:540,y:960,scale:0,rotation:(i%2?1:-1)*120,duration:.55,ease:'power3.in'},16.2+i*.04));
+  tl.to('#print',{x:0,y:700,scale:0,rotation:90,duration:.55,ease:'power3.in'},16.22)
+    .to(['#disc','#ringK','#sqK'],{x:540,y:960,scale:0,duration:.5,ease:'power3.in',stagger:.03},16.24);
+
+  showAt('#s5',16.8);
+  S('#dot',{scale:0}); S('#ring',{scale:0,opacity:0}); S(brandL,{yPercent:120}); S('#sub',{opacity:0,letterSpacing:'1.1em'}); S('#sub i',{scaleX:0});
+  S('#tag .mask>span',{yPercent:120});
+  const sw=$('#sw'),swn=sw.getTotalLength(); S(sw,{strokeDasharray:swn,strokeDashoffset:swn,opacity:0}); tl.set(sw,{opacity:1},19.16);
+  S(['#star','#star2'],{scale:0,transformOrigin:'50% 50%'});
+  tl.to('#dot',{scale:1,duration:.22,ease:'back.out(3)'},16.82)
+    .to('#dot',{scaleX:36,scaleY:.08,duration:.4,ease:'expo.out'},17.02)
+    .to('#dot',{opacity:0,duration:.3},17.3)
+    .set('#ring',{opacity:1},17.02)
+    .to('#ring',{scale:9,opacity:0,duration:.8,ease:'power2.out'},17.02)
+    .to(brandL,{yPercent:0,duration:.6,ease:'expo.out',stagger:.028},17.04)
+    .fromTo('#cam',{scale:1.04},{scale:1,duration:.6,ease:'power2.out',immediateRender:false},17.02)
+    .to('#sub',{opacity:1,letterSpacing:'.62em',duration:.7,ease:'expo.out'},17.36)
+    .to('#sub i',{scaleX:1,duration:.7,ease:'expo.out'},17.42)
+    .to('#tag .mask:not(.lv)>span',{yPercent:0,duration:.4,ease:'expo.out',stagger:.07},17.72)
+    .to('#tag .mask.lv>span',{yPercent:0,duration:.4,ease:'expo.out',stagger:.09},18.38)
+    .to(sw,{strokeDashoffset:0,duration:.55,ease:'power2.inOut'},19.16)
+    .to('#star',{scale:1,rotation:180,duration:.5,ease:'back.out(3)'},19.2)
+    .to('#star2',{scale:.4,rotation:180,duration:.45,ease:'back.out(3)'},19.36)
+    .to('#star',{scale:.85,duration:.35,ease:'sine.inOut'},19.7)
+    .to('#cam',{scale:1.035,duration:2.3,ease:'sine.inOut'},17.7);
+  tl.set({}, {}, 20);
+
+  window.tl=tl; window.seek=t=>{tl.seek(t,false);};
+  window.ready=true;
+  if(location.hash==='#play'){ // live preview with audio
+    const a=new Audio('assets/Reklama.mp3'); document.body.onclick=()=>{a.currentTime=0;a.play();tl.restart();};
+    const s=Math.min(innerWidth/1080,innerHeight/1920); $('#stage').style.cssText+=`transform:scale(${s});transform-origin:0 0`;
+  }
+}
+build();
+</script>
+</body>
+</html>
