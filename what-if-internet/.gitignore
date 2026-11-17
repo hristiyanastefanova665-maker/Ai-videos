@@ -1,0 +1,6 @@
+node_modules/
+stills/
+out/.video_segs-*/
+out/*.lock
+out/video.mp4
+audio/mix.wav

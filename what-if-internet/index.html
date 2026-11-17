@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Какво ако интернетът изчезне завинаги?</title>
+<style>
+@font-face { font-family: Corm; src: url(assets/fonts/cormorant-garamond-latin-500-normal.woff2) format('woff2'); font-weight: 500; unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: Corm; src: url(assets/fonts/cormorant-garamond-cyrillic-500-normal.woff2) format('woff2'); font-weight: 500; unicode-range: U+0400-04FF; }
+@font-face { font-family: Corm; src: url(assets/fonts/cormorant-garamond-latin-600-normal.woff2) format('woff2'); font-weight: 600; unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: Corm; src: url(assets/fonts/cormorant-garamond-cyrillic-600-normal.woff2) format('woff2'); font-weight: 600; unicode-range: U+0400-04FF; }
+@font-face { font-family: Corm; font-style: italic; src: url(assets/fonts/cormorant-garamond-latin-500-italic.woff2) format('woff2'); font-weight: 500; unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: Corm; font-style: italic; src: url(assets/fonts/cormorant-garamond-cyrillic-500-italic.woff2) format('woff2'); font-weight: 500; unicode-range: U+0400-04FF; }
+@font-face { font-family: Sans; src: url(assets/fonts/inter-latin-500-normal.woff2) format('woff2'); font-weight: 500; unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: Sans; src: url(assets/fonts/inter-cyrillic-500-normal.woff2) format('woff2'); font-weight: 500; unicode-range: U+0400-04FF; }
+@font-face { font-family: Sans; src: url(assets/fonts/inter-latin-600-normal.woff2) format('woff2'); font-weight: 600; unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: Sans; src: url(assets/fonts/inter-cyrillic-600-normal.woff2) format('woff2'); font-weight: 600; unicode-range: U+0400-04FF; }
+html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+#stage { position: absolute; inset: 0; }
+canvas#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+.layer { position: absolute; inset: 0; pointer-events: none; }
+#vignette { background: radial-gradient(ellipse 85% 70% at 50% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,.42) 100%); }
+#shade { background: linear-gradient(180deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 58%, rgba(0,0,0,.30) 78%, rgba(0,0,0,.42) 100%); }
+#flash { background: #fff; opacity: 0; }
+#black { background: #050506; opacity: 0; }
+.txt { color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.6); }
+#title { position: absolute; left: 0; right: 0; top: 560px; text-align: center; }
+#title .kicker { font: 600 34px/1 Sans; letter-spacing: .42em; margin-left: .42em; opacity: .92; }
+#title .big { font: 600 128px/1.0 Corm; letter-spacing: .02em; margin-top: 30px; }
+#title .big span { display: inline-block; }
+#counter { position: absolute; left: 64px; top: 236px; }
+#counter .lab { font: 600 21px/1 Sans; letter-spacing: .3em; opacity: .9; }
+#counter .num { font: 600 78px/1 Corm; margin-top: 12px; font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+#counter .num small { font: 600 26px/1 Sans; letter-spacing: .22em; margin-left: 14px; vertical-align: 12px; }
+#counter .rule { width: 64px; height: 2px; background: rgba(255,255,255,.75); margin-top: 18px; }
+#stagebig { position: absolute; left: 0; right: 0; top: 700px; text-align: center; }
+#stagebig .n { font: 600 150px/1 Corm; letter-spacing: .01em; }
+#stagebig .u { font: 600 30px/1 Sans; letter-spacing: .5em; margin-left: .5em; margin-top: 10px; }
+#sub { position: absolute; left: 44px; right: 44px; top: 1288px; text-align: center; font: italic 500 50px/1.2 Corm; white-space: pre-line; text-shadow: 0 2px 22px rgba(0,0,0,.75), 0 1px 3px rgba(0,0,0,.8); }
+#end { position: absolute; left: 80px; right: 80px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 70px; }
+#end div { font: 600 62px/1.22 Corm; letter-spacing: .05em; color: #fff; }
+#logo { position: absolute; left: 0; right: 0; top: 820px; text-align: center; color: #fff; }
+#logo .mark { font: 600 104px/1 Corm; letter-spacing: .01em; }
+#logo .studio { font: 600 24px/1 Sans; letter-spacing: .62em; margin-left: .62em; margin-top: 18px; opacity: .85; }
+#logo svg { display: block; margin: 0 auto 26px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div class="layer" id="vignette"></div>
+  <div class="layer" id="shade"></div>
+  <div class="layer txt" id="counterL"><div id="counter"><div class="lab"></div><div class="num"></div><div class="rule"></div></div></div>
+  <div class="layer txt"><div id="title"><div class="kicker">КАКВО АКО</div><div class="big"></div></div></div>
+  <div class="layer txt"><div id="stagebig"><div class="n"></div><div class="u"></div></div></div>
+  <div class="layer txt"><div id="sub"></div></div>
+  <div class="layer" id="flash"></div>
+  <div class="layer" id="black"></div>
+  <div class="layer"><div id="end"><div id="end1">НИЕ СЪЗДАДОХМЕ СВЯТ,<br>КОЙТО СВЪРЗА ВСИЧКИ.</div><div id="end2">НО ЗАБРАВИХМЕ ЛИ<br>КАК ДА ЖИВЕЕМ БЕЗ НЕГО?</div></div></div>
+  <div class="layer"><div id="logo">
+    <svg width="120" height="64" viewBox="0 0 120 64"><polyline points="6,52 34,38 56,44 84,18 112,10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="112" cy="10" r="6" fill="#fff"/><line x1="6" y1="60" x2="114" y2="60" stroke="rgba(255,255,255,.5)" stroke-width="2"/></svg>
+    <div class="mark">TinyPlot</div><div class="studio">STUDIO</div>
+  </div></div>
+</div>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js" } }</script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
