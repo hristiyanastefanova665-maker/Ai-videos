@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Как създадох AI видео безплатно</title>
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/500.css">
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/600.css">
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/700.css">
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/800.css">
+<link rel="stylesheet" href="node_modules/@fontsource/montserrat/900.css">
+<link rel="stylesheet" href="node_modules/@fontsource/playfair-display/700.css">
+<link rel="stylesheet" href="node_modules/@fontsource/playfair-display/700-italic.css">
+<link rel="stylesheet" href="node_modules/@fontsource/playfair-display/500-italic.css">
+<link rel="stylesheet" href="node_modules/@fontsource/jetbrains-mono/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/jetbrains-mono/700.css">
+<style>
+:root{
+  --rose:#C46F8C; --rose2:#B25F7C; --roseD:#8E4562; --roseL:#E7B9C8;
+  --k:#17121A; --k2:#241C26; --cream:#F7F0E6; --cream2:#EDE3D4;
+  --gold:#D4B072; --goldL:#EBD3A2; --lav:#EDE4FB; --lavT:#8B5CF6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Montserrat,sans-serif;color:var(--k);background:var(--rose)}
+.abs{position:absolute;left:0;top:0}
+.scene{position:absolute;inset:0;visibility:hidden}
+.fill{position:absolute;inset:0}
+.center{display:flex;align-items:center;justify-content:center}
+.bg-rose{background:radial-gradient(120% 80% at 50% 35%,#CF7D98 0%,var(--rose) 45%,#A9587A 100%)}
+.bg-cream{background:radial-gradient(120% 90% at 50% 30%,#FBF6EE 0%,var(--cream) 50%,#E7DCCB 100%)}
+.bg-dark{background:radial-gradient(110% 80% at 50% 40%,#2C2230 0%,var(--k) 60%,#0D0A0F 100%)}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.22) 2px,transparent 2.4px);background-size:44px 44px}
+.dots.dk{background-image:radial-gradient(rgba(23,18,26,.10) 2px,transparent 2.4px)}
+.dots.gd{background-image:radial-gradient(rgba(212,176,114,.16) 2px,transparent 2.4px)}
+#grain{position:absolute;inset:-20px;background:url(assets/grain.png);opacity:.10;mix-blend-mode:overlay;pointer-events:none;z-index:90}
+#vign{position:absolute;inset:0;background:radial-gradient(100% 70% at 50% 45%,transparent 55%,rgba(20,8,16,.32) 100%);z-index:89;pointer-events:none}
+
+/* typography */
+.h1{font-weight:900;color:var(--cream);text-transform:uppercase;letter-spacing:-.01em;line-height:1.02;text-shadow:0 8px 0 rgba(23,18,26,.85),0 18px 40px rgba(23,18,26,.35)}
+.h1.dk{color:var(--k);text-shadow:0 7px 0 rgba(196,111,140,.55)}
+.cap{font-weight:800;letter-spacing:.42em;text-transform:uppercase;font-size:30px}
+.serif{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.line{display:block;overflow:hidden;padding:0 10px 14px}
+.line>span{display:inline-block}
+.tc{text-align:center}
+.w{position:absolute;left:0;width:1080px;text-align:center}
+
+/* avatar */
+#av{position:absolute;left:0;top:0;width:1254px;height:1254px;transform-origin:627px 627px;z-index:30}
+#avDisc{position:absolute;left:177px;top:150px;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle at 45% 40%,#2A2129,#130E13 70%)}
+#avOrbit{position:absolute;left:77px;top:50px;width:1100px;height:1100px;border-radius:50%;border:5px dashed rgba(212,176,114,.75)}
+#avBody{position:absolute;inset:0;transform-origin:620px 1000px}
+#avBody img{position:absolute;left:0;top:0}
+#mouth{position:absolute;left:566px;top:603px;width:88px;height:0;border-radius:50%;background:radial-gradient(ellipse at 50% 35%,#5B1F27,#2B0C10 75%);transform:rotate(-6.5deg)}
+#avBody #llip{left:530px;top:580px}
+.lid{position:absolute;border-radius:50% 50% 45% 45%/70% 70% 30% 30%;transform-origin:50% 0;transform:scaleY(0);border-bottom:5px solid #1a0e10}
+#lidL{left:466px;top:436px;width:80px;height:34px;background:linear-gradient(#d88a74,#e9a080);transform:rotate(4deg) scaleY(0)}
+#lidR{left:612px;top:402px;width:96px;height:38px;background:linear-gradient(#e6927a,#f2a585)}
+#arm{position:absolute;left:0;top:0;width:1254px;height:1254px;overflow:visible;transform-origin:980px 1250px}
+#bulb{position:absolute;left:0;top:0;width:220px;height:300px}
+#thinkDots i{position:absolute;border-radius:50%;background:var(--k)}
+
+/* reels UI */
+#tracker{left:60px;top:228px;width:960px;z-index:60;color:var(--k);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:.06em;opacity:.8}
+#subs{position:absolute;left:40px;width:1000px;top:1440px;text-align:center;z-index:70}
+#subs .sb{display:inline-block;max-width:1000px;padding:16px 34px 20px;border-radius:26px;background:rgba(23,18,26,.9);box-shadow:0 18px 40px rgba(20,5,15,.3);font-weight:800;font-size:50px;line-height:1.2;color:#FFF9F0}
+#subs span{display:inline-block;margin:0 .12em}
+#subs span.on{color:var(--goldL)}
+#subs span.fut{opacity:.72}
+#note{position:absolute;left:0;width:1080px;top:1890px;text-align:center;font-size:20px;font-weight:600;color:rgba(255,249,240,.75);z-index:71}
+
+/* phone / video */
+.phone{position:absolute;border-radius:58px;background:#0f0b10;padding:16px;box-shadow:0 40px 80px rgba(40,10,25,.45),inset 0 0 0 3px #3a2d36}
+.phone canvas{width:100%;height:100%;border-radius:44px;display:block;background:#222}
+.phone:after{content:'';position:absolute;left:50%;top:30px;width:110px;height:26px;margin-left:-55px;border-radius:14px;background:#0f0b10}
+.tag{position:absolute;padding:16px 26px;border-radius:18px;background:var(--cream);font-weight:900;font-size:44px;color:var(--k);box-shadow:0 14px 30px rgba(40,10,25,.35)}
+.tag small{font-size:24px;font-weight:700;opacity:.7}
+.tag .strike{position:absolute;left:-10px;right:-10px;top:50%;height:9px;margin-top:-4px;background:var(--k);border-radius:5px;transform-origin:0 50%;transform:scaleX(0)}
+.pill{display:inline-flex;align-items:center;gap:14px;padding:18px 34px;border-radius:999px;font-weight:800;font-size:38px;white-space:nowrap}
+.pill.k{background:var(--k);color:var(--cream)}
+.pill.c{background:var(--cream);color:var(--k);box-shadow:0 12px 26px rgba(40,10,25,.22)}
+.pill.g{background:linear-gradient(135deg,#E9CC92,#C9A060);color:var(--k)}
+.pill.o{border:4px solid var(--k);color:var(--k)}
+
+/* windows */
+.win{position:absolute;background:#FFFDF9;border-radius:40px;box-shadow:0 40px 90px rgba(60,20,40,.28),0 0 0 2px rgba(23,18,26,.06);overflow:hidden}
+.win .bar{height:86px;display:flex;align-items:center;gap:14px;padding:0 34px;border-bottom:2px solid #EFE6DA;font-weight:800;font-size:30px}
+.win .bar i{width:18px;height:18px;border-radius:50%;background:#E5D8C8}
+.win .bar i:nth-child(1){background:#E59BB2}.win .bar i:nth-child(2){background:#EBD3A2}
+.bubble{position:absolute;border-radius:34px;padding:26px 32px;font-size:32px;font-weight:600;line-height:1.35}
+.bubble.u{background:var(--k);color:var(--cream);border-bottom-right-radius:10px}
+.bubble.a{background:#F4EDE3;color:var(--k);border-bottom-left-radius:10px}
+.inp{position:absolute;left:30px;right:30px;bottom:30px;height:96px;border-radius:48px;background:#F4EDE3;display:flex;align-items:center;padding:0 34px;font-size:30px;font-weight:600;color:#9B8E86}
+.cursor{display:inline-block;width:3px;height:1em;background:currentColor;vertical-align:-.12em;margin-left:2px}
+.file{position:absolute;z-index:12;width:250px;height:320px;border-radius:30px;background:#FFFDF9;box-shadow:0 26px 60px rgba(30,10,20,.35);overflow:hidden}
+.file .hd{position:absolute;left:0;right:0;bottom:0;height:86px;background:var(--k);color:var(--cream);font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
+.file .ic{position:absolute;left:0;right:0;top:0;bottom:86px;display:flex;align-items:center;justify-content:center}
+.mono{font-family:'JetBrains Mono',monospace}
+.chip{position:absolute;padding:14px 28px;border-radius:999px;font-weight:800;font-size:34px;white-space:nowrap}
+.tkn{position:absolute;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#F6E3B4,#D4B072 55%,#A9813F);box-shadow:inset 0 0 0 4px rgba(120,80,30,.35);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:#6b4a1c}
+.spark{position:absolute;width:60px;height:60px}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- ================= S1 HOOK ================= -->
+<div class="scene bg-rose" id="s1">
+  <div class="dots"></div>
+  <div class="phone" id="ph2" style="left:20px;top:560px;width:320px;height:570px"><canvas width="540" height="960"></canvas></div>
+  <div class="phone" id="ph3" style="left:740px;top:600px;width:320px;height:570px"><canvas width="540" height="960"></canvas></div>
+  <div class="phone" id="ph1" style="left:290px;top:440px;width:500px;height:890px"><canvas width="540" height="960"></canvas></div>
+  <div class="tag" id="pt1" style="left:40px;top:470px">€29<small>/мес</small><div class="strike"></div></div>
+  <div class="tag" id="pt2" style="left:770px;top:520px">€76<small>/мес</small><div class="strike"></div></div>
+  <div class="tag" id="pt3" style="left:60px;top:1010px">€95<small>/мес</small><div class="strike"></div></div>
+  <div class="tag" id="pt4" style="left:720px;top:1040px;font-size:30px;background:var(--k);color:var(--cream)">СКЪПИ ВИДЕО<br>ГЕНЕРАТОРИ<div class="strike" style="background:var(--rose)"></div></div>
+  <div class="w h1" id="h1a" style="top:250px;font-size:118px"><span class="line"><span>ИСКАШ</span></span><span class="line"><span>ТАКИВА ВИДЕА?</span></span></div>
+  <div class="w h1" id="h1b" style="top:270px;font-size:96px"><span class="line"><span>ЩЕ ТИ ПОКАЖА</span></span><span class="line"><span>КАК ГО НАПРАВИХ</span></span></div>
+  <div class="w" id="h1c" style="top:250px">
+    <div class="cap" style="color:var(--k);font-size:32px;margin-bottom:22px">И НАЙ-ХУБАВОТО?</div>
+    <div class="h1" style="font-size:84px"><span class="line"><span>МОЖЕШ ДА ГИ</span></span><span class="line"><span>СЪЗДАВАШ И</span></span></div>
+    <div id="freeStamp" style="display:inline-block;margin-top:6px"><span class="pill k" style="font-size:96px;font-weight:900;padding:20px 54px;letter-spacing:.01em">БЕЗПЛАТНО!</span></div>
+  </div>
+  <div id="nameTag" class="abs" style="left:0;top:560px;width:1080px;text-align:center;z-index:40">
+    <div class="serif" style="font-size:86px;color:var(--cream);text-shadow:0 6px 20px rgba(0,0,0,.35)">Християна</div>
+    <div class="cap" style="font-size:22px;color:var(--k);margin-top:2px">HRISTIYANA CREATIVE</div>
+  </div>
+</div>
+
+<!-- ================= S2 TITLE ================= -->
+<div class="scene bg-cream" id="s2">
+  <div class="dots dk"></div>
+  <div class="abs" id="s2num" style="left:70px;top:330px;font-family:'Playfair Display';font-weight:700;font-style:italic;font-size:300px;line-height:1;color:var(--rose)">01</div>
+  <div class="abs" id="s2t" style="left:80px;top:650px">
+    <div class="cap" style="font-size:34px">СТЪПКА 1 —</div>
+    <div class="h1 dk" style="font-size:130px;margin-top:14px"><span class="line"><span>ИМАШ <i style="font-style:normal;color:var(--rose)">ИДЕЯ</i></span></span></div>
+  </div>
+</div>
+
+<!-- ================= S2b CHAT ================= -->
+<div class="scene bg-cream" id="s2b">
+  <div class="dots dk"></div>
+  <div class="win" id="chat" style="left:80px;top:340px;width:920px;height:740px">
+    <div class="bar"><i></i><i></i><i></i><span style="margin-left:16px">AI асистент</span><span class="pill o" style="margin-left:auto;font-size:24px;padding:8px 22px;border-width:3px">ChatGPT ▾</span></div>
+    <div id="chatHello" class="abs tc" style="left:0;top:200px;width:920px">
+      <svg width="90" height="90" viewBox="0 0 100 100"><path d="M50 4 L60 40 L96 50 L60 60 L50 96 L40 60 L4 50 L40 40Z" fill="#C46F8C"/></svg>
+      <div style="font-weight:800;font-size:46px;margin-top:20px">С какво мога да помогна?</div>
+    </div>
+    <div class="inp"><span id="inpTxt" style="color:#9B8E86">Попитай каквото и да е…</span></div>
+  </div>
+  <div class="chip" id="c1" style="left:390px;top:1120px;background:var(--k);color:var(--cream)">ChatGPT ✓</div>
+  <div class="chip" id="c2" style="left:680px;top:1120px;background:var(--k);color:var(--cream)">Gemini ✓</div>
+  <div class="chip" id="c3" style="left:390px;top:1215px;background:var(--k);color:var(--cream)">друг AI ✓</div>
+  <div class="chip" id="c4" style="left:640px;top:1215px;font-size:30px;background:#fff;color:var(--k);border:4px solid var(--k)">Claude <span style="color:var(--rose)">(още не)</span><div class="strike" style="position:absolute;left:18px;right:18px;top:50%;height:7px;background:var(--rose);border-radius:4px;transform-origin:0 50%"></div></div>
+</div>
+
+<!-- ================= S2c WHY ================= -->
+<div class="scene bg-dark" id="s2c">
+  <div class="dots gd"></div>
+  <div class="w h1" id="why" style="top:640px;font-size:250px;color:var(--cream)">ЗАЩО<span style="color:var(--rose)">?</span></div>
+  <div id="jar" class="abs" style="left:110px;top:560px;width:330px;height:640px">
+    <div class="cap" style="color:var(--gold);font-size:22px;letter-spacing:.3em;text-align:center">ЦЕННИ<br>CLAUDE ТОКЕНИ</div>
+    <div style="position:absolute;left:55px;top:110px;width:220px;height:470px;border-radius:40px;border:6px solid var(--gold);overflow:hidden">
+      <div id="jarFill" style="position:absolute;left:0;right:0;bottom:0;height:100%;background:repeating-linear-gradient(0deg,#D4B072 0 34px,#C29A58 34px 40px)"></div>
+    </div>
+    <div id="jarPct" class="tc" style="position:absolute;left:0;width:330px;top:596px;font-weight:900;font-size:44px;color:var(--cream)">100%</div>
+  </div>
+  <div id="endless" class="abs" style="left:520px;top:560px;width:460px;height:640px">
+    <div class="cap" style="color:var(--roseL);font-size:22px;letter-spacing:.3em;text-align:center">БЕЗКРАЙНИ<br>РАЗГОВОРИ ∞</div>
+    <div style="position:absolute;left:0;top:110px;width:460px;height:520px;overflow:hidden;border-radius:30px;background:rgba(255,255,255,.05);-webkit-mask:linear-gradient(transparent,#000 18%,#000 82%,transparent)">
+      <div id="bubbleStream" style="position:absolute;left:0;top:0;width:460px"></div>
+    </div>
+  </div>
+  <div id="saveTok" class="w" style="top:1270px"><span class="pill g" style="font-size:40px">ПАЗИ ТОКЕНИТЕ ЗА ГЛАВНОТО ✦</span></div>
+</div>
+
+<!-- ================= S2d PROMPT ================= -->
+<div class="scene bg-cream" id="s2d">
+  <div class="dots dk"></div>
+  <div class="win" id="chat2" style="left:70px;top:330px;width:940px;height:960px">
+    <div class="bar"><i></i><i></i><i></i><span style="margin-left:16px">AI асистент</span><span class="pill o" style="margin-left:auto;font-size:24px;padding:8px 22px;border-width:3px">ChatGPT ▾</span></div>
+    <div class="bubble u" id="ub1" style="right:34px;top:116px;width:640px">Искам 2D анимирано видео: „Какво ако интернетът изчезне?“ Стилът — като в референтното видео.</div>
+    <div class="bubble u" id="ub2" style="right:34px;top:330px;width:420px;padding:18px;display:flex;gap:20px;align-items:center">
+      <div style="width:120px;height:214px;border-radius:18px;overflow:hidden;flex:none"><canvas id="cvAtt" width="540" height="960" style="width:120px;height:214px;display:block"></canvas></div>
+      <div><div style="font-size:26px;opacity:.7">📎 прикачено</div><div style="font-weight:800">reference.mp4</div><div style="font-size:24px;color:var(--goldL)">референтен стил</div></div>
+    </div>
+    <div class="bubble a" id="ab1" style="left:34px;top:582px;width:820px;height:330px;padding:24px 30px;overflow:hidden">
+      <div style="font-weight:800;font-size:28px;color:var(--rose2);letter-spacing:.12em">✦ ПОДРОБЕН ПРОМПТ ЗА ВИДЕО</div>
+      <div id="promptTxt" class="mono" style="font-size:22px;line-height:1.55;margin-top:10px;white-space:pre-wrap;font-weight:400"></div>
+    </div>
+  </div>
+  <div id="eq" class="abs" style="left:60px;top:1110px;width:640px;padding:22px 26px;border-radius:34px;background:var(--k);text-align:center;box-shadow:0 30px 60px rgba(30,10,20,.35)">
+    <div style="font-weight:900;font-size:46px;color:var(--cream);line-height:1.18"><span id="eq1">ИДЕЯ</span> <span id="eq2" style="color:var(--rose)">+</span><br><span id="eq3">РЕФЕРЕНТНО ВИДЕО</span></div>
+    <div id="eq4" style="font-weight:900;font-size:54px;color:var(--gold);line-height:1.2">= ГОТОВ ПРОМПТ</div>
+  </div>
+</div>
+
+<!-- ================= S3 VOICE ================= -->
+<div class="scene bg-rose" id="s3">
+  <div class="dots"></div>
+  <div class="abs" id="s3num" style="left:70px;top:330px;font-family:'Playfair Display';font-weight:700;font-style:italic;font-size:300px;line-height:1;color:var(--cream)">02</div>
+  <div class="abs" id="s3t" style="left:80px;top:650px">
+    <div class="cap" style="font-size:34px;color:var(--k)">СТЪПКА 2 —</div>
+    <div class="h1" style="font-size:150px;margin-top:14px"><span class="line"><span>ГЛАСЪТ</span></span></div>
+  </div>
+  <svg id="mic" class="abs" style="left:700px;top:330px" width="300" height="300" viewBox="0 0 300 300">
+    <g fill="none" stroke="#F7F0E6" stroke-width="8" stroke-linecap="round">
+      <path class="ring" d="M60 120 a90 90 0 0 0 180 0" opacity=".9"/>
+      <path class="ring2" d="M30 110 a120 120 0 0 0 240 0" opacity=".5"/>
+    </g>
+    <rect x="105" y="30" width="90" height="160" rx="45" fill="#17121A"/>
+    <rect x="120" y="60" width="60" height="10" rx="5" fill="#D4B072"/><rect x="120" y="85" width="60" height="10" rx="5" fill="#D4B072"/><rect x="120" y="110" width="60" height="10" rx="5" fill="#D4B072"/>
+    <path d="M150 210 v50 M110 265 h80" stroke="#17121A" stroke-width="12" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<div class="scene bg-rose" id="s3b">
+  <div class="dots"></div>
+  <div class="win" id="scriptWin" style="left:70px;top:330px;width:940px;height:740px">
+    <div class="bar"><i></i><i></i><i></i><span style="margin-left:16px">AI асистент · voiceover скрипт</span></div>
+    <div id="scriptBody" style="position:absolute;left:44px;top:120px;right:44px;font-size:34px;font-weight:600;line-height:1.5"></div>
+  </div>
+  <div class="chip" id="lblEmo" style="left:400px;top:1100px;background:var(--k);color:var(--cream)">ЕМОЦИИ ✦</div>
+  <div class="chip" id="lblIns" style="left:400px;top:1195px;font-size:30px;background:var(--cream);color:var(--k)">ИНСТРУКЦИИ ЗА ИЗГОВАРЯНЕ</div>
+</div>
+
+<div class="scene bg-rose" id="s3c">
+  <div class="dots"></div>
+  <div class="cap abs" id="elLbl" style="left:0;width:1080px;text-align:center;top:300px;color:var(--cream);font-size:26px">ELEVENLABS · TEXT TO SPEECH</div>
+  <div class="win" id="tts" style="left:70px;top:360px;width:720px;height:860px;border-radius:44px">
+    <div style="height:110px;display:flex;align-items:center;padding:0 40px;font-size:38px;font-weight:600;border-bottom:2px solid #eee;color:#111">
+      <svg width="40" height="40" viewBox="0 0 40 40" style="margin-right:22px"><rect x="3" y="6" width="34" height="28" rx="7" fill="none" stroke="#555" stroke-width="3"/><rect x="9" y="12" width="9" height="16" rx="2" fill="#555"/></svg>Text to Speech
+      <svg width="46" height="46" viewBox="0 0 46 46" style="margin-left:auto"><circle cx="23" cy="23" r="20" fill="none" stroke="#C46F8C" stroke-width="5" stroke-dasharray="80 40"/></svg>
+    </div>
+    <div id="ttsText" style="position:absolute;left:40px;right:40px;top:150px;font-size:33px;line-height:1.62;color:#1b1b1b;font-weight:500"></div>
+    <div id="wave" style="position:absolute;left:40px;right:40px;top:540px;height:110px;display:flex;align-items:center;gap:7px"></div>
+    <div style="position:absolute;left:40px;right:40px;top:660px;display:flex;gap:16px;align-items:center">
+      <div class="pill" style="border:3px solid #e5e5e5;font-size:28px;padding:12px 26px;color:#222;font-weight:600"><span style="color:var(--lavT)">☺</span> Auto-tag ▾</div>
+      <div style="margin-left:auto;width:70px;height:70px;border-radius:20px;border:3px solid #e5e5e5"></div>
+    </div>
+    <div id="genBtn" style="position:absolute;left:40px;right:40px;top:750px;height:84px;border-radius:24px;background:#151515;color:#fff;font-size:32px;font-weight:700;display:flex;align-items:center;justify-content:center">Generate speech</div>
+  </div>
+  <div class="chip" id="free" style="left:560px;top:420px;background:linear-gradient(135deg,#E9CC92,#C9A060);color:var(--k);transform:rotate(6deg)">БЕЗПЛАТЕН ПЛАН ✓</div>
+  <div id="langs"></div>
+  <div class="file" id="mp3" style="left:800px;top:640px;width:240px;height:300px">
+    <div class="ic"><svg width="170" height="120" viewBox="0 0 170 120" id="mp3wave"></svg></div>
+    <div class="hd">voiceover.mp3</div>
+  </div>
+  <svg id="dl" class="abs" style="left:880px;top:520px" width="80" height="100" viewBox="0 0 80 100"><path d="M40 6 V70 M14 46 L40 72 L66 46 M10 92 H70" fill="none" stroke="#F7F0E6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div id="flow" class="abs" style="left:60px;top:1250px;width:960px;text-align:center;font-weight:900;font-size:46px;color:var(--cream)">
+    <span id="fl1" class="pill k" style="font-size:38px">СКРИПТ</span> <span id="fa1">→</span> <span id="fl2" class="pill c" style="font-size:38px">ELEVENLABS</span> <span id="fa2">→</span> <span id="fl3" class="pill g" style="font-size:38px">MP3</span>
+  </div>
+  <svg id="cur" class="abs" style="left:0;top:0;z-index:5" width="70" height="80" viewBox="0 0 70 80"><path d="M6 4 L6 64 L22 50 L34 76 L46 70 L34 45 L56 45 Z" fill="#17121A" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg>
+</div>
+
+<!-- ================= S4 MAGIC ================= -->
+<div class="scene bg-dark" id="s4">
+  <div class="dots gd"></div>
+  <div id="sparks" class="fill"></div>
+  <div class="w" id="magicTxt" style="top:330px">
+    <div class="cap" style="color:var(--roseL);font-size:30px">И СЕГА ИДВА</div>
+    <div class="h1" id="shimmer" style="font-size:112px;margin-top:20px;color:var(--gold);text-shadow:0 8px 0 #000,0 0 60px rgba(212,176,114,.35)">НАЙ-<br>ИНТЕРЕСНАТА<br>ЧАСТ</div>
+  </div>
+  <div id="s4title" class="abs" style="left:0;top:0;width:1080px">
+    <div class="abs" id="s4num" style="left:70px;top:330px;font-family:'Playfair Display';font-weight:700;font-style:italic;font-size:300px;line-height:1;color:var(--gold)">03</div>
+    <div class="abs" style="left:80px;top:650px">
+      <div class="cap" style="font-size:34px;color:var(--roseL)">СТЪПКА 3 —</div>
+      <div class="h1" style="font-size:118px;margin-top:14px"><span class="line"><span>CLAUDE /</span></span><span class="line"><span style="color:var(--gold)">CLAUDE CODE</span></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="scene" id="s4c" style="background:radial-gradient(110% 80% at 50% 30%,#D58BA4 0%,#B05E7E 50%,#7E3B5B 100%)">
+  <div class="dots"></div>
+  <div id="laptop" class="abs" style="left:110px;top:860px;width:860px;height:600px;perspective:1800px;z-index:10">
+    <div id="lid" style="position:absolute;left:30px;top:0;width:800px;height:520px;border-radius:34px 34px 8px 8px;background:#1a141c;padding:22px;transform-origin:50% 100%;box-shadow:0 30px 70px rgba(30,5,20,.5)">
+      <div id="scr" style="position:relative;width:100%;height:100%;border-radius:16px;background:#FBF6EE;overflow:hidden">
+        <div style="height:64px;background:#EFE5D8;display:flex;align-items:flex-end;gap:8px;padding:0 18px">
+          <div id="tabA" style="padding:12px 26px;border-radius:14px 14px 0 0;font-weight:800;font-size:24px;background:#FBF6EE">✻ Claude</div>
+          <div id="tabB" class="mono" style="padding:12px 26px;border-radius:14px 14px 0 0;font-weight:700;font-size:22px;color:#7a6c64">&gt;_ Claude Code</div>
+        </div>
+        <div id="scrList" style="position:absolute;left:30px;top:96px;right:30px"></div>
+        <div id="scrCount" style="position:absolute;right:28px;bottom:22px;font-weight:900;font-size:120px;line-height:1;color:var(--rose)">3</div>
+      </div>
+    </div>
+    <div style="position:absolute;left:0;top:516px;width:860px;height:40px;border-radius:0 0 40px 40px;background:linear-gradient(#cfc4b8,#a99d92)"></div>
+    <div style="position:absolute;left:350px;top:516px;width:160px;height:14px;border-radius:0 0 12px 12px;background:#8f8379"></div>
+  </div>
+  <div class="file" id="fA"><div class="ic" style="background:#222"><canvas id="cvFA" width="540" height="960" style="width:100%;height:100%;object-fit:cover"></canvas></div><div class="hd">reference.mp4</div></div>
+  <div class="file" id="fB"><div class="ic"><svg width="180" height="110" viewBox="0 0 180 110" class="wv"></svg></div><div class="hd">voiceover.mp3</div></div>
+  <div class="file" id="fC"><div class="ic" style="flex-direction:column;align-items:flex-start;padding:30px 30px 0;gap:14px">
+    <b style="font-size:22px;letter-spacing:.14em;color:var(--rose2)">ПРОМПТ</b><i style="display:block;width:180px;height:10px;border-radius:5px;background:#d9cdbd"></i><i style="display:block;width:150px;height:10px;border-radius:5px;background:#d9cdbd"></i><i style="display:block;width:170px;height:10px;border-radius:5px;background:#d9cdbd"></i><i style="display:block;width:120px;height:10px;border-radius:5px;background:#d9cdbd"></i></div><div class="hd">prompt.txt</div></div>
+</div>
+
+<div class="scene" id="s4d" style="background:#120E14">
+  <div class="dots gd"></div>
+  <div class="abs mono" style="left:50px;top:290px;width:980px;height:420px;border-radius:28px;background:#1C1620;box-shadow:0 0 0 2px #2c2430;overflow:hidden" id="ide">
+    <div style="height:60px;display:flex;align-items:center;gap:12px;padding:0 24px;color:#a99;font-size:22px;border-bottom:2px solid #2c2430"><b style="color:var(--gold)">✻ Claude Code</b><span>— ~/ai-reel</span><span id="ccStat" style="margin-left:auto;color:var(--roseL)">● изграждам видеото…</span></div>
+    <div id="code" style="position:absolute;left:24px;top:80px;right:24px;font-size:25px;line-height:1.5;color:#EDE3D4;white-space:pre"></div>
+  </div>
+  <div class="abs" style="left:50px;top:810px;width:300px;height:533px;border-radius:26px;background:#F7F0E6;overflow:hidden;box-shadow:0 0 0 2px #2c2430" id="prev">
+    <div class="fill bg-rose"></div><div class="dots"></div>
+    <svg viewBox="0 0 300 533" width="300" height="533" class="abs" id="prevSvg">
+      <circle id="pv1" cx="150" cy="300" r="105" fill="#17121A"/>
+      <path id="pv2" d="M40 140 h220" stroke="#F7F0E6" stroke-width="22" stroke-linecap="round"/>
+      <path id="pv3" d="M70 182 h160" stroke="#F7F0E6" stroke-width="22" stroke-linecap="round"/>
+      <path id="pv4" d="M60 470 h180" stroke="#D4B072" stroke-width="16" stroke-linecap="round"/>
+    </svg>
+    <img id="pvAv" src="assets/avatar.png" class="abs" style="left:20px;top:170px;width:260px">
+  </div>
+  <div id="chips4" class="abs" style="left:380px;top:810px;width:650px"></div>
+  <div class="abs" id="tl" style="left:50px;top:1360px;width:980px;height:0;"></div>
+</div>
+
+<div class="scene" id="s4e" style="background:#120E14">
+  <div class="dots gd"></div>
+  <div class="w cap" style="top:420px;color:var(--gold);font-size:30px">РЕНДЕРИРАНЕ</div>
+  <div id="strip" class="abs" style="left:60px;top:520px;width:960px;height:500px;display:flex;gap:14px;justify-content:center"></div>
+  <div class="abs" style="left:140px;top:1090px;width:800px;height:26px;border-radius:13px;background:#2c2430;overflow:hidden"><div id="prog" style="height:100%;width:0;background:linear-gradient(90deg,#C46F8C,#D4B072)"></div></div>
+  <div class="w" style="top:1140px;font-weight:900;font-size:64px;color:var(--cream)" id="pct">0%</div>
+  <div class="w mono" style="top:1236px;font-size:28px;color:#a99">1080×1920 · 30 FPS · MP4</div>
+  <div class="w" id="done" style="top:1290px"><span class="pill g" style="font-size:44px">ГОТОВО ✓</span></div>
+</div>
+
+<!-- ================= S5 RESULT ================= -->
+<div class="scene bg-rose" id="s5">
+  <div class="dots"></div>
+  <div id="rays" class="abs" style="left:-460px;top:-160px;width:2000px;height:2000px;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,240,220,.13) 0 8deg,transparent 8deg 20deg);border-radius:50%;-webkit-mask:radial-gradient(circle,#000 20%,transparent 60%)"></div>
+  <div class="w" id="r1" style="top:250px">
+    <div class="cap" style="color:var(--k);font-size:32px">И ВСИЧКО ТОВА —</div>
+    <div class="h1" style="font-size:82px;margin-top:16px"><span class="line"><span>БЕЗ СКЪПИ ВИДЕО</span></span><span class="line"><span>ГЕНЕРАТОРИ!</span></span></div>
+  </div>
+  <div class="phone" id="phR" style="left:90px;top:560px;width:430px;height:765px"><canvas width="540" height="960"></canvas></div>
+  <div id="shine" class="abs" style="left:90px;top:560px;width:430px;height:765px;border-radius:58px;overflow:hidden;pointer-events:none"><div id="shineBar" style="position:absolute;top:-200px;left:-300px;width:160px;height:1300px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:rotate(20deg)"></div></div>
+  <div class="file" id="iA" style="width:150px;height:190px"><div class="ic" style="font-size:60px">▶</div><div class="hd" style="height:56px;font-size:20px">MP4</div></div>
+  <div class="file" id="iB" style="width:150px;height:190px"><div class="ic" style="font-size:60px">♪</div><div class="hd" style="height:56px;font-size:20px">MP3</div></div>
+  <div class="file" id="iC" style="width:150px;height:190px"><div class="ic" style="font-size:56px">✎</div><div class="hd" style="height:56px;font-size:20px">ПРОМПТ</div></div>
+  <div class="chip" id="k1" style="left:550px;top:590px;background:var(--cream);color:var(--k);font-size:28px">безплатни инструменти ✓</div>
+  <div class="chip" id="k2" style="left:550px;top:675px;background:var(--cream);color:var(--k);font-size:28px">безплатни планове ✓</div>
+  <div id="k3" class="abs" style="left:550px;top:770px;width:460px;padding:22px 26px;border-radius:26px;background:var(--k);color:var(--cream);font-size:26px;font-weight:600;line-height:1.35">
+    <b style="color:var(--gold);font-size:28px;letter-spacing:.06em">⚠ СЪОБРАЗИ СЕ С ЛИМИТИТЕ</b><br>Безплатният достъп и Claude Code зависят от плана и настройката.
+  </div>
+</div>
+
+<div class="scene bg-cream" id="s5b">
+  <div class="dots dk"></div>
+  <div class="w" id="nn" style="top:260px"><div class="cap" style="font-size:34px">НЕ Е НУЖНО ДА СИ</div></div>
+  <div class="tag" id="n1" style="left:120px;top:350px;font-size:58px;transform:rotate(-4deg)">ПРОГРАМИСТ<div class="strike" style="background:var(--rose);height:12px"></div></div>
+  <div class="tag" id="n2" style="left:560px;top:470px;font-size:58px;transform:rotate(3deg);background:var(--k);color:var(--cream)">ДИЗАЙНЕР<div class="strike" style="background:var(--rose);height:12px"></div></div>
+  <div class="tag" id="n3" style="left:150px;top:600px;font-size:54px;transform:rotate(-2deg);background:var(--rose);color:var(--cream)">ТЕХНОЛОГИЧЕН ГЕНИЙ<div class="strike" style="background:var(--k);height:12px"></div></div>
+</div>
+
+<!-- ================= S6 CTA ================= -->
+<div class="scene bg-rose" id="s6">
+  <div class="dots"></div>
+  <div class="w" id="q1" style="top:270px"><div class="h1" style="font-size:96px"><span class="line"><span>ИСКАШ ЛИ ДА</span></span><span class="line"><span>ТИ ПОКАЖА КАК?</span></span></div></div>
+  <div class="w" id="q2" style="top:250px">
+    <div class="h1" style="font-size:100px"><span class="line"><span>ЗАПАЗИ</span></span><span class="line"><span>ВИДЕОТО <svg width="96" height="86" viewBox="0 0 100 90" style="vertical-align:-6px"><path d="M50 86 C20 62 4 46 4 26 C4 12 15 3 28 3 C38 3 46 9 50 17 C54 9 62 3 72 3 C85 3 96 12 96 26 C96 46 80 62 50 86Z" fill="#17121A"/></svg></span></span></div>
+    <div style="font-weight:900;font-size:48px;color:var(--k);margin-top:4px;line-height:1.2">ПОСЛЕДВАЙ МЕ ЗА<br>ОЩЕ AI ТРИКОВЕ!</div>
+  </div>
+  <div id="followBtn" class="abs" style="left:640px;top:820px"><span class="pill c" id="fbIn" style="font-size:36px">+ ПОСЛЕДВАЙ</span></div>
+  <div id="saveBtn" class="abs" style="left:110px;top:800px;width:150px;height:150px;border-radius:40px;background:var(--cream);display:flex;align-items:center;justify-content:center;box-shadow:0 20px 40px rgba(40,10,25,.3)">
+    <svg width="70" height="86" viewBox="0 0 70 86"><path id="bmk" d="M8 6 H62 V80 L35 60 L8 80Z" fill="none" stroke="#17121A" stroke-width="8" stroke-linejoin="round"/></svg>
+  </div>
+  <div id="hearts" class="fill" style="pointer-events:none"></div>
+</div>
+
+<div class="scene bg-rose" id="s7">
+  <div class="dots"></div>
+  <div class="w" id="nextQ" style="top:250px"><div class="cap" style="color:var(--k);font-size:28px;line-height:1.6">КАКВО ЛИ ЩЕ СЪЗДАДЕМ<br>СЛЕДВАЩИЯ ПЪТ?</div></div>
+  <div id="brand" class="w" style="top:1250px">
+    <div class="serif" style="font-size:150px;color:var(--cream);line-height:1;text-shadow:0 10px 30px rgba(60,10,30,.35)">Hristiyana</div>
+    <div class="cap" style="font-size:34px;letter-spacing:.6em;margin-top:18px;padding-left:.6em">CREATIVE</div>
+    <div style="margin-top:34px"><span class="pill c" style="font-size:38px;font-weight:900">AI <b style="color:var(--gold)">·</b> ДИЗАЙН <b style="color:var(--gold)">·</b> <span style="color:var(--rose)">БИЗНЕС</span></span></div>
+  </div>
+  <div id="icons" class="fill"></div>
+</div>
+
+<!-- shared avatar -->
+<div id="av">
+  <div id="avOrbit"></div>
+  <div id="avDisc"></div>
+  <div id="avBody">
+    <img src="assets/avatar.png" width="1254" height="1254">
+    <div id="mouth"></div>
+    <img id="llip" src="assets/lowerlip.png">
+    <div class="lid" id="lidL"></div><div class="lid" id="lidR"></div>
+  </div>
+  <svg id="arm" viewBox="0 0 1254 1254">
+    <g id="armG">
+      <path d="M990 1250 C1030 1060 1085 880 1122 770" stroke="#141014" stroke-width="140" stroke-linecap="round" fill="none"/>
+      <path d="M1040 1100 C1060 1000 1085 900 1105 840" stroke="#3a2e37" stroke-width="10" stroke-linecap="round" fill="none" opacity=".7"/>
+      <rect x="1060" y="728" width="140" height="56" rx="26" fill="#221a21" transform="rotate(-72 1130 756)"/>
+      <g transform="translate(1138 700) rotate(-78) scale(1.75)">
+        <path d="M-6 -34 C30 -44 70 -48 104 -44 C128 -41 132 -16 110 -12 C96 -10 80 -8 66 -4 C56 14 34 36 -2 32 Z" fill="#F2A983" stroke="#5A2E24" stroke-width="7" stroke-linejoin="round"/>
+        <path d="M70 -36 C88 -37 102 -36 112 -33 M66 -24 C84 -25 100 -24 112 -22" fill="none" stroke="#C7795C" stroke-width="5" stroke-linecap="round"/>
+        <path d="M14 -40 C18 -72 40 -86 56 -74 C64 -66 56 -50 40 -40" fill="#F2A983" stroke="#5A2E24" stroke-width="7" stroke-linejoin="round"/>
+      </g>
+    </g>
+  </svg>
+  <svg id="bulb" viewBox="0 0 220 300">
+    <g id="bulbRays" stroke="#D4B072" stroke-width="10" stroke-linecap="round">
+      <path d="M110 6 v30"/><path d="M30 40 l20 20"/><path d="M190 40 l-20 20"/><path d="M4 120 h28"/><path d="M216 120 h-28"/>
+    </g>
+    <path d="M110 50 C60 50 40 90 40 120 C40 160 75 178 80 210 H140 C145 178 180 160 180 120 C180 90 160 50 110 50Z" fill="#F6E3B4" stroke="#17121A" stroke-width="8"/>
+    <path id="bulbGlow" d="M110 50 C60 50 40 90 40 120 C40 160 75 178 80 210 H140 C145 178 180 160 180 120 C180 90 160 50 110 50Z" fill="#FFD27A" opacity="0"/>
+    <path d="M90 170 L100 120 L110 150 L120 120 L130 170" fill="none" stroke="#17121A" stroke-width="6" stroke-linejoin="round"/>
+    <rect x="80" y="214" width="60" height="18" rx="6" fill="#17121A"/><rect x="86" y="238" width="48" height="16" rx="6" fill="#17121A"/>
+  </svg>
+  <div id="thinkDots"><i style="left:860px;top:260px;width:34px;height:34px"></i><i style="left:900px;top:190px;width:46px;height:46px"></i></div>
+</div>
+
+<div id="tracker" class="abs"><span id="cL">// 01 — кука</span><span id="cR">ЧАСТ 1/6</span></div>
+<div id="subs"></div>
+<div id="flash" class="fill" style="background:#FFF7EC;opacity:0;z-index:80;pointer-events:none"></div>
+<div id="wipe" class="abs" style="left:-200px;top:0;width:1480px;height:2400px;background:var(--k);z-index:85;transform:translateY(2400px) rotate(-8deg);pointer-events:none"></div>
+<div id="vign"></div>
+<div id="grain"></div>
+</div>
+
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script src="data.js"></script>
+<script>
+gsap.ticker.lagSmoothing(0);
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const tl = gsap.timeline({ paused: true });
+const frameFns = [];
+const SFX = []; const sfx = (t, n, g = 1) => SFX.push({ t: +t.toFixed(3), n, g });
+window.SFX = SFX;
+
+/* ---------- reference video frames ---------- */
+const NREF = 869, REF = [];
+function refFrame(sec) { const i = Math.floor(((sec % (NREF / 30)) + NREF / 30) % (NREF / 30) * 30); return REF[Math.min(i, NREF - 1)]; }
+const vids = [];
+function video(canvas, t0, t1, src0, rate = 1) { vids.push({ c: canvas, x: canvas.getContext('2d'), t0, t1, src0, rate }); }
+frameFns.push(t => { for (const v of vids) if (t >= v.t0 - .05 && t <= v.t1 + .05) { const im = refFrame(v.src0 + (Math.max(t, v.t0) - v.t0) * v.rate); if (im) v.x.drawImage(im, 0, 0, v.c.width, v.c.height); } });
+
+/* ---------- scene visibility ---------- */
+function scene(id, a, b) { tl.set('#' + id, { visibility: 'visible' }, a); tl.set('#' + id, { visibility: 'hidden' }, b); }
+const END = 106.6;
+scene('s1', 0, 11.9); scene('s2', 11.75, 15.1); scene('s2b', 14.95, 19.4); scene('s2c', 19.22, 24.95);
+scene('s2d', 24.8, 34.85); scene('s3', 34.7, 37.4); scene('s3b', 37.2, 43.85); scene('s3c', 43.6, 54.62);
+scene('s4', 54.5, 58.45); scene('s4c', 58.3, 66.9); scene('s4d', 66.45, 74.1); scene('s4e', 73.85, 78.6);
+scene('s5', 78.4, 86.2); scene('s5b', 86.0, 93.2); scene('s6', 93.05, 100.1); scene('s7', 99.9, END + 1);
+
+/* ---------- helpers ---------- */
+function lines(sel, t, stagger = .12, d = .55) { tl.fromTo(sel + ' .line>span', { yPercent: 125, rotate: 0 }, { yPercent: 0, rotate: 0, duration: d, ease: 'power4.out', stagger }, t); }
+function linesOut(sel, t) { tl.to(sel + ' .line>span', { yPercent: -110, duration: .35, ease: 'power2.in', stagger: .05 }, t); }
+function pop(sel, t, d = .5, extra = {}) { tl.fromTo(sel, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: d, ease: 'back.out(2.2)', ...extra }, t); }
+function out(sel, t, d = .3) { tl.to(sel, { autoAlpha: 0, scale: .85, duration: d, ease: 'power2.in' }, t); }
+function typer(el, text, t0, t1, opts = {}) {
+  const node = typeof el === 'string' ? $(el) : el;
+  frameFns.push(t => { if (t < t0 - .5 || t > t1 + .5 && node._done) return; const n = Math.round(gsap.utils.clamp(0, 1, (t - t0) / (t1 - t0)) * text.length); if (node._n === n) return; node._n = n; node._done = n === text.length; const s = text.slice(0, n); node.innerHTML = (opts.fmt ? opts.fmt(s) : esc(s)) + (n < text.length && t >= t0 ? '<span class="cursor"></span>' : ''); });
+}
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+function typeSfx(t0, t1) { for (let t = t0; t < t1; t += .075 + ((t * 7919) % 1) * .05) sfx(t, 'key', .5); }
+
+/* ---------- avatar ---------- */
+const AV = { cx: 540, cy: 1250, s: .62 };
+function avTo(t, cx, cy, s, d = .9, ease = 'power3.inOut') { tl.to('#av', { x: cx - 627, y: cy - 627, scale: s, duration: d, ease }, t); }
+function avSet(t, cx, cy, s) { tl.set('#av', { x: cx - 627, y: cy - 627, scale: s }, t); }
+gsap.set('#av', { x: 540 - 627, y: 1290 - 627, scale: .62 });
+gsap.set('#arm', { autoAlpha: 0 }); gsap.set('#bulb', { autoAlpha: 0, x: 900, y: -250 }); gsap.set('#thinkDots i', { autoAlpha: 0 });
+gsap.set('#avOrbit', { autoAlpha: 0 }); gsap.set('#avDisc', { autoAlpha: 0 });
+function armIn(t, side = 1, d = .45) { tl.set('#arm', { scaleX: side, autoAlpha: 1, rotate: 25 * side, y: 260 }, t); tl.to('#arm', { rotate: 0, y: 0, duration: d, ease: 'back.out(1.6)' }, t); }
+function armOut(t) { tl.to('#arm', { y: 300, rotate: 10, duration: .35, ease: 'power2.in' }, t); tl.set('#arm', { autoAlpha: 0 }, t + .36); }
+function armWiggle(t, n = 2) { tl.to('#armG', { rotate: -4, transformOrigin: '990px 1250px', duration: .18, yoyo: true, repeat: n * 2 - 1, ease: 'sine.inOut' }, t); }
+gsap.set('#arm', { transformOrigin: '627px 1250px' });
+// speech: mouth + head motion (pure functions of t)
+const speakOn = t => t > 0 && t < 103.5;
+frameFns.push(t => {
+  const i = Math.floor(t * 30); const e = speakOn(t) ? (window.ENV[i] || 0) : 0;
+  const d = e * 11;
+  $('#mouth').style.height = (d * 1.25) + 'px'; $('#mouth').style.top = (604 - d * .15) + 'px';
+  $('#llip').style.transform = `translateY(${d}px)`;
+  const sway = Math.sin(t * 1.7) * .9 + Math.sin(t * 3.1) * .5 * e;
+  const nod = Math.sin(t * 5.3) * 2.2 * e;
+  $('#avBody').style.transform = `rotate(${sway}deg) translateY(${nod + Math.sin(t * 2.2) * 2}px) scaleY(${1 + Math.sin(t * 2.2) * .004})`;
+  // blinks
+  const B = [1.4, 4.6, 8.3, 10.9, 13.6, 17.2, 21.5, 26.1, 29.8, 33.4, 36.6, 40.2, 44.9, 48.3, 52.6, 57.4, 60.9, 64.5, 69.1, 72.4, 76.2, 80.1, 83.6, 87.0, 90.2, 94.6, 97.9, 101.4, 104.2];
+  let k = 0; for (const b of B) { const x = (t - b) / .16; if (x > 0 && x < 1) k = Math.sin(x * Math.PI); }
+  $('#lidL').style.transform = `rotate(4deg) scaleY(${k})`; $('#lidR').style.transform = `scaleY(${k})`;
+});
+
+/* ================= S1 HOOK ================= */
+video($('#ph1 canvas'), 0, 11.9, 2.4, 1); video($('#ph2 canvas'), 0, 11.9, 11.5, 1); video($('#ph3 canvas'), 0, 11.9, 19.5, 1);
+gsap.set('#ph1', { rotate: -4 }); gsap.set('#ph2', { rotate: -11, scale: .95 }); gsap.set('#ph3', { rotate: 10, scale: .95 });
+tl.fromTo('#ph1', { y: 120, scale: .9 }, { y: 0, scale: 1, duration: .8, ease: 'power3.out' }, 0);
+tl.fromTo(['#ph2', '#ph3'], { x: i => i ? 300 : -300 }, { x: 0, duration: .9, ease: 'power3.out' }, .1);
+tl.to('#ph1', { y: -20, rotate: -2, duration: 11, ease: 'sine.inOut' }, .8);
+tl.to('#ph2', { y: 30, rotate: -8, duration: 11, ease: 'sine.inOut' }, .8);
+tl.to('#ph3', { y: -30, rotate: 7, duration: 11, ease: 'sine.inOut' }, .8);
+avSet(0, 540, 1330, .66);
+tl.fromTo('#av', { y: 1330 - 627 + 300 }, { y: 1330 - 627, duration: .7, ease: 'back.out(1.3)' }, 0);
+tl.fromTo('#h1a .line:nth-child(1)>span', { yPercent: 125, scale: 1 }, { yPercent: 0, scale: 1, duration: .35, ease: 'back.out(2)' }, 0);
+tl.fromTo('#h1a .line:nth-child(2)>span', { yPercent: 125, scale: 1 }, { yPercent: 0, scale: 1, duration: .4, ease: 'back.out(2)' }, .9);
+sfx(0, 'whoosh', .8); sfx(.05, 'thud', .7); sfx(.95, 'thud', .8);
+// price tags
+['#pt1', '#pt2', '#pt3', '#pt4'].forEach((s, i) => { pop(s, 2.3 + i * .2, .4, { rotate: [-8, 6, 5, -4][i] }); sfx(2.3 + i * .2, 'pop', .6); });
+['#pt1', '#pt2', '#pt3', '#pt4'].forEach((s, i) => { tl.to(s + ' .strike', { scaleX: 1, duration: .18, ease: 'power2.out' }, 3.8 + i * .1); });
+sfx(3.8, 'swish', .7); sfx(4.05, 'buzz', .5);
+tl.to(['#pt1', '#pt2', '#pt3', '#pt4'], { y: 1500, rotate: 40, duration: .8, ease: 'power2.in', stagger: .05 }, 4.6); tl.set(['#pt1', '#pt2', '#pt3', '#pt4'], { autoAlpha: 0 }, 5.6);
+gsap.set(['#h1b', '#h1c', '#nameTag'], { autoAlpha: 0 });
+linesOut('#h1a', 5.0);
+tl.set('#h1b', { autoAlpha: 1 }, 5.2); lines('#h1b', 5.22); sfx(5.2, 'whoosh', .5);
+avTo(5.2, 540, 1210, .8, .9);
+tl.to('#ph1', { scale: .9, autoAlpha: .55, duration: .8 }, 5.2); tl.to(['#ph2', '#ph3'], { autoAlpha: .35, duration: .8 }, 5.2);
+tl.fromTo('#nameTag', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.6);
+tl.to('#nameTag', { autoAlpha: 0, duration: .3 }, 7.7);
+linesOut('#h1b', 7.6);
+tl.set('#h1c', { autoAlpha: 1 }, 7.85);
+tl.fromTo('#h1c .cap', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .4 }, 7.92); sfx(7.92, 'pop', .5);
+lines('#h1c', 9.04, .3); sfx(9.04, 'whoosh', .5);
+gsap.set('#freeStamp', { autoAlpha: 0 });
+tl.fromTo('#freeStamp', { autoAlpha: 0, scale: 2.6, rotate: -16 }, { autoAlpha: 1, scale: 1, rotate: -4, duration: .35, ease: 'power4.in' }, 10.45);
+tl.to('#stage', { x: 8, duration: .05, yoyo: true, repeat: 5 }, 10.8); sfx(10.78, 'thud', 1); sfx(10.82, 'sparkle', .7);
+avTo(9.0, 540, 1300, .7, .8);
+tl.to(['#ph1', '#ph2', '#ph3'], { autoAlpha: .9, duration: .5 }, 9.0);
+// transition: dark diagonal wipe
+function wipe(t) { tl.fromTo('#wipe', { y: 2400 }, { y: -2600, duration: .8, ease: 'power3.inOut' }, t - .4); sfx(t - .35, 'whoosh', .8); }
+wipe(11.8);
+
+/* ================= S2 STEP 1 ================= */
+tl.set('#tracker', { color: '#17121A' }, 11.8);
+tl.set('#tracker', { color: '#F7F0E6' }, 0);
+tl.fromTo('#s2num', { autoAlpha: 0, x: -80 }, { autoAlpha: 1, x: 0, duration: .7, ease: 'power3.out' }, 11.85);
+tl.fromTo('#s2t .cap', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .4 }, 11.9);
+lines('#s2t', 12.05);
+avSet(11.75, 560, 1380, .58);
+tl.set('#av', { rotate: 0 }, 11.75);
+tl.to('#avBody', { duration: 0 }, 11.75);
+// thinking: dots then bulb
+tl.to('#thinkDots i', { autoAlpha: 1, duration: .2, stagger: .2 }, 12.2);
+tl.to('#thinkDots i', { autoAlpha: 0, duration: .2 }, 12.85);
+tl.fromTo('#bulb', { autoAlpha: 0, scale: .2, rotate: -20 }, { autoAlpha: 1, scale: 1.4, rotate: 0, duration: .5, ease: 'back.out(2.5)' }, 12.88);
+tl.fromTo('#bulbGlow', { opacity: 0 }, { opacity: .9, duration: .15, yoyo: true, repeat: 3 }, 13.3);
+tl.to('#bulbGlow', { opacity: .85, duration: .2 }, 14.0);
+tl.fromTo('#bulbRays', { scale: .5, transformOrigin: '110px 120px', opacity: 0 }, { scale: 1, opacity: 1, duration: .4 }, 13.3);
+sfx(12.88, 'pop', .6); sfx(13.3, 'ding', .9);
+tl.to('#bulb', { autoAlpha: 0, scale: .3, duration: .3 }, 14.9);
+tl.to(['#s2num', '#s2t'], { autoAlpha: 0, y: -40, duration: .35 }, 14.75);
+// S2b chat
+tl.fromTo('#chat', { autoAlpha: 0, y: 160, scale: .9 }, { autoAlpha: 1, y: 0, scale: 1, duration: .6, ease: 'power3.out' }, 15.0); sfx(15.0, 'whoosh', .6);
+avTo(15.0, 200, 1360, .44, .7);
+gsap.set(['#c1', '#c2', '#c3', '#c4'], { autoAlpha: 0 }); gsap.set('#c4 .strike', { scaleX: 0 });
+[[15.52, '#c1'], [16.62, '#c3'], [16.3, '#c2']].forEach(([t, s]) => { pop(s, t, .4); sfx(t, 'pop', .6); });
+pop('#c4', 18.28, .4); sfx(18.28, 'pop', .5);
+tl.to('#c4 .strike', { scaleX: 1, duration: .2 }, 18.55); sfx(18.55, 'buzz', .6);
+tl.to('#c4', { x: 10, duration: .05, yoyo: true, repeat: 5 }, 18.6);
+tl.to('#chatHello', { scale: 1.06, yoyo: true, repeat: 1, duration: .3 }, 16.2);
+// S2c WHY
+tl.fromTo('#why', { scale: 2.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .3, ease: 'power4.in' }, 19.22); sfx(19.3, 'thud', 1); sfx(19.28, 'whoosh', .4);
+tl.to('#stage', { x: 10, duration: .04, yoyo: true, repeat: 5 }, 19.5);
+tl.set('#tracker', { color: '#F7F0E6' }, 19.22);
+tl.set('#av', { autoAlpha: 0 }, 19.22);
+tl.to('#why', { y: -380, scale: .5, duration: .6, ease: 'power3.inOut' }, 20.1);
+gsap.set(['#jar', '#endless', '#saveTok'], { autoAlpha: 0 });
+tl.fromTo('#jar', { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: .5 }, 20.3);
+tl.fromTo('#endless', { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: .5 }, 20.5);
+(function () {
+  const bs = $('#bubbleStream'); const txt = ['А ако…?', 'Може ли още идеи?', 'Не, не така…', 'Пробвай пак', 'А по-кратко?', 'Още една версия', 'Хм…', 'И още…'];
+  for (let i = 0; i < 26; i++) { const d = document.createElement('div'); d.className = 'bubble ' + (i % 2 ? 'a' : 'u'); d.style.cssText = `position:relative;margin:14px ${i % 2 ? '120px 0 16px' : '0 16px 110px'};font-size:26px;padding:16px 22px;${i % 2 ? '' : 'margin-left:110px;'}`; d.textContent = txt[i % txt.length]; bs.appendChild(d); }
+})();
+tl.fromTo('#bubbleStream', { y: 520 }, { y: -1700, duration: 4.4, ease: 'none' }, 20.4);
+tl.fromTo('#jarFill', { height: '100%' }, { height: '12%', duration: 3.4, ease: 'power1.in' }, 21.0);
+frameFns.push(t => { if (t > 20 && t < 25) { const p = gsap.utils.clamp(0, 1, (t - 21) / 3.4); $('#jarPct').textContent = Math.round(100 - 88 * p * p) + '%'; } });
+for (let i = 0; i < 9; i++) {
+  const c = document.createElement('div'); c.className = 'tkn'; c.textContent = '¢'; c.style.left = '240px'; c.style.top = '700px'; $('#s2c').appendChild(c);
+  const t = 21.2 + i * .33; tl.fromTo(c, { x: 0, y: 0, autoAlpha: 0, scale: .6 }, { autoAlpha: 1, scale: 1, duration: .1 }, t);
+  tl.to(c, { x: 480 + (i % 3) * 60, y: -120 + (i % 4) * 90, rotate: 360, duration: .5, ease: 'power2.in' }, t + .05);
+  tl.to(c, { autoAlpha: 0, scale: .2, duration: .12 }, t + .5); if (i % 2 === 0) sfx(t + .5, 'coin', .45);
+}
+pop('#saveTok', 23.9, .5); sfx(23.9, 'sparkle', .6);
+// S2d prompt
+tl.set('#tracker', { color: '#17121A' }, 24.8);
+tl.fromTo('#chat2', { autoAlpha: 0, y: 120 }, { autoAlpha: 1, y: 0, duration: .5, ease: 'power3.out' }, 24.8); sfx(24.8, 'whoosh', .6);
+tl.set('#av', { autoAlpha: 1 }, 24.8); avSet(24.8, 920, 1380, .38); tl.fromTo('#av', { y: 1380 - 627 + 300 }, { y: 1380 - 627, duration: .6, ease: 'back.out(1.4)' }, 24.9);
+gsap.set(['#ub1', '#ub2', '#ab1', '#eq'], { autoAlpha: 0 });
+tl.fromTo('#ub1', { autoAlpha: 0, y: 40, scale: .9, transformOrigin: '100% 100%' }, { autoAlpha: 1, y: 0, scale: 1, duration: .4, ease: 'back.out(1.6)' }, 24.95); sfx(24.95, 'pop', .5);
+typer('#ub1', 'Искам 2D анимирано видео: „Какво ако интернетът изчезне?“ Стилът — като в референтното видео.', 25.0, 27.0); typeSfx(25.0, 27.0);
+tl.fromTo('#ub2', { autoAlpha: 0, x: -700, y: 500, rotate: -20, scale: 1.3 }, { autoAlpha: 1, x: 0, y: 0, rotate: 0, scale: 1, duration: .8, ease: 'power3.out' }, 27.2); sfx(27.2, 'whoosh', .7); sfx(27.95, 'pop', .7);
+video($('#cvAtt'), 27.2, 34.9, 4.0, 1);
+tl.fromTo('#ab1', { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: .4 }, 30.6); sfx(30.6, 'pop', .5);
+const PROMPT = 'ФОРМАТ: 9:16 · 1080×1920 · 30 FPS\nСТИЛ: 2D motion graphics като в референцията\nЦВЕТОВЕ: пудрово розово, черно, крем, злато\nСЦЕНА 1: силна кука в първите 3 секунди…\nСУБТИТРИ: синхрон с гласа, ключови думи\nПРЕХОДИ: плавни, кинематографични…';
+typer('#promptTxt', PROMPT, 31.0, 34.2); typeSfx(31.0, 34.2);
+tl.to('#chat2', { scale: .82, y: -10, transformOrigin: '50% 0%', duration: .5, ease: 'power3.inOut' }, 31.1);
+tl.fromTo('#eq', { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: .45, ease: 'back.out(1.5)' }, 31.4);
+gsap.set(['#eq1', '#eq2', '#eq3', '#eq4'], { autoAlpha: 0 });
+[['#eq1', 31.5], ['#eq2', 31.9], ['#eq3', 32.2], ['#eq4', 33.3]].forEach(([s, t]) => { tl.fromTo(s, { autoAlpha: 0, scale: .5 }, { autoAlpha: 1, scale: 1, duration: .35, ease: 'back.out(2)' }, t); sfx(t, 'pop', .55); });
+sfx(33.3, 'ding', .6);
+armIn(25.2, -1); armWiggle(28.0, 2); armOut(31.0);
+
+/* ================= S3 VOICE ================= */
+function iris(t, color) { /* expanding circle transition */ const c = document.createElement('div'); c.style.cssText = `position:absolute;left:540px;top:960px;width:10px;height:10px;margin:-5px;border-radius:50%;background:${color};z-index:84`; $('#stage').appendChild(c); tl.fromTo(c, { scale: 0, autoAlpha: 1 }, { scale: 460, duration: .55, ease: 'power3.in' }, t - .5); tl.to(c, { autoAlpha: 0, duration: .25 }, t + .05); sfx(t - .45, 'whoosh', .7); }
+iris(34.75, '#C46F8C');
+tl.set('#tracker', { color: '#17121A' }, 34.7); 
+tl.fromTo('#s3num', { autoAlpha: 0, x: -80 }, { autoAlpha: 1, x: 0, duration: .7, ease: 'power3.out' }, 34.8);
+tl.fromTo('#s3t .cap', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .4 }, 34.85);
+lines('#s3t', 36.0); sfx(36.0, 'thud', .7);
+tl.fromTo('#mic', { autoAlpha: 0, scale: .4, rotate: 20 }, { autoAlpha: 1, scale: 1, rotate: 0, duration: .5, ease: 'back.out(2)' }, 35.3); sfx(35.3, 'pop', .6);
+tl.fromTo('#mic .ring', { scale: .8, transformOrigin: '150px 120px' }, { scale: 1.1, duration: .5, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 35.6);
+avSet(34.7, 540, 1380, .64); tl.fromTo('#av', { y: 1380 - 627 + 400 }, { y: 1380 - 627, duration: .7, ease: 'back.out(1.3)' }, 34.7);
+// S3b script
+tl.fromTo('#scriptWin', { autoAlpha: 0, y: 140 }, { autoAlpha: 1, y: 0, duration: .55, ease: 'power3.out' }, 37.25); sfx(37.25, 'whoosh', .6);
+avTo(37.25, 190, 1370, .42, .7);
+const SCRIPT = [['curious', 'Искаш да създаваш подобни AI видеа?'], ['excited', 'Можеш да започнеш напълно безплатно!'], ['confident', 'Ще ти покажа как го направих аз.'], ['whispering', 'А сега… най-интересната част.']];
+const tagHTML = (t, cls = '') => `<span class="tg ${cls}" style="display:inline-block;padding:2px 16px;border-radius:12px;border:2px solid #D9C6F7;background:#F4EEFD;color:#8B5CF6;font-weight:700;margin-right:12px;font-size:.9em">[${t}]</span>`;
+(function () { const b = $('#scriptBody'); SCRIPT.forEach(([tag, txt], i) => { const p = document.createElement('div'); p.style.marginBottom = '34px'; p.innerHTML = tagHTML(tag) + `<span class="st"></span>`; b.appendChild(p); }); })();
+$$('#scriptBody > div').forEach((p, i) => {
+  const t0 = 38.0 + i * 1.15; tl.fromTo(p.querySelector('.tg'), { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .3, ease: 'back.out(3)' }, t0); sfx(t0, 'pop', .5);
+  typer(p.querySelector('.st'), SCRIPT[i][1], t0 + .15, t0 + 1.0);
+});
+typeSfx(38.1, 42.6);
+tl.to('#scriptBody .tg', { backgroundColor: '#FBE7A8', borderColor: '#D4B072', color: '#6b4a1c', scale: 1.12, duration: .25, stagger: .1, yoyo: true, repeat: 1 }, 41.36);
+gsap.set(['#lblEmo', '#lblIns'], { autoAlpha: 0 });
+pop('#lblEmo', 41.36, .45); pop('#lblIns', 42.16, .45); sfx(41.36, 'sparkle', .5); sfx(42.16, 'pop', .6);
+armIn(37.6, 1); armOut(43.3);
+// S3c ElevenLabs
+tl.fromTo('#tts', { autoAlpha: 0, x: 200, rotateY: -25 }, { autoAlpha: 1, x: 0, rotateY: 0, duration: .6, ease: 'power3.out' }, 43.65); sfx(43.65, 'whoosh', .7);
+tl.fromTo('#elLbl', { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: .4 }, 43.9);
+const TTS = SCRIPT.slice(0, 3).map(([t, s]) => tagHTML(t) + esc(s)).join('<br><br>');
+gsap.set('#ttsText', { autoAlpha: 0 }); tl.set('#ttsText', { innerHTML: TTS }, 43.7);
+tl.fromTo('#ttsText', { autoAlpha: 0, y: -40, scale: .9 }, { autoAlpha: 1, y: 0, scale: 1, duration: .45, ease: 'back.out(1.6)' }, 44.56); sfx(44.56, 'pop', .7);
+tl.fromTo('#ttsText .tg', { backgroundColor: '#F4EEFD' }, { backgroundColor: '#E2D2FB', duration: .3, stagger: .15, yoyo: true, repeat: 1 }, 45.0);
+avTo(43.65, 930, 1330, .4, .7); armIn(44.2, -1); armWiggle(45.2, 2);
+gsap.set('#free', { autoAlpha: 0 }); tl.fromTo('#free', { autoAlpha: 0, scale: 2.5 }, { autoAlpha: 1, scale: 1, duration: .3, ease: 'power4.in' }, 47.0); sfx(47.25, 'thud', .7); sfx(47.3, 'sparkle', .5);
+const LANGS = ['English', 'Español', 'Deutsch', 'Français', 'Italiano', 'Polski', 'Português', 'Українська', '日本語', 'Türkçe'];
+LANGS.forEach((l, i) => {
+  const c = document.createElement('div'); c.className = 'chip'; c.textContent = l; c.style.cssText += `background:rgba(247,240,230,.92);color:#17121A;font-size:26px;left:${[90, 330, 560, 150, 420, 650, 110, 380, 640, 250][i]}px;top:${[530, 600, 520, 700, 760, 680, 870, 900, 830, 1000][i]}px`; $('#s3c').appendChild(c);
+  tl.fromTo(c, { autoAlpha: 0, scale: .3, y: 60 }, { autoAlpha: 1, scale: 1, y: 0, duration: .3, ease: 'back.out(2)' }, 48.0 + i * .11);
+  tl.to(c, { autoAlpha: 0, y: -60, duration: .3 }, 50.9 + i * .02);
+});
+for (let i = 0; i < 5; i++) sfx(48.0 + i * .22, 'tick', .4);
+const bg = document.createElement('div'); bg.className = 'chip'; bg.id = 'bgLang'; bg.innerHTML = 'Български ✓'; bg.style.cssText += 'background:#17121A;color:#EBD3A2;font-size:52px;left:230px;top:740px;padding:22px 44px'; $('#s3c').appendChild(bg);
+gsap.set('#bgLang', { autoAlpha: 0 });
+tl.fromTo('#bgLang', { autoAlpha: 0, scale: 3 }, { autoAlpha: 1, scale: 1, duration: .3, ease: 'power4.in' }, 49.95); sfx(50.2, 'thud', .8); sfx(50.25, 'ding', .6);
+tl.to('#bgLang', { autoAlpha: 0, scale: .6, duration: .3 }, 50.85);
+tl.to('#ttsText', { opacity: .25, duration: .3 }, 47.9); tl.to('#ttsText', { opacity: 1, duration: .3 }, 50.9);
+// generate
+gsap.set('#cur', { x: 900, y: 1500, autoAlpha: 0 });
+tl.to('#cur', { autoAlpha: 1, duration: .1 }, 50.4); tl.to('#cur', { x: 440, y: 1150, duration: .55, ease: 'power3.inOut' }, 50.45);
+tl.to('#cur', { scale: .8, duration: .08, yoyo: true, repeat: 1 }, 51.02); sfx(51.02, 'click', 1);
+tl.to('#genBtn', { scale: .95, backgroundColor: '#C46F8C', duration: .1, yoyo: true, repeat: 1 }, 51.02);
+tl.set('#genBtn', { textContent: 'Генериране…' }, 51.05); tl.set('#genBtn', { textContent: '✓ Готово' }, 52.6);
+tl.to('#cur', { autoAlpha: 0, duration: .2 }, 51.5);
+(function () { const w = $('#wave'); for (let i = 0; i < 46; i++) { const b = document.createElement('i'); b.style.cssText = `flex:1;border-radius:4px;background:linear-gradient(#8B5CF6,#C46F8C);height:6px`; w.appendChild(b); } })();
+frameFns.push(t => { if (t < 50 || t > 55) return; const p = gsap.utils.clamp(0, 1, (t - 51.1) / 1.4); $$('#wave i').forEach((b, i) => { const on = i / 46 < p; const h = on ? 12 + 90 * Math.abs(Math.sin(i * 1.7 + t * (t < 52.6 ? 9 : 0)) * Math.sin(i * .37 + 1)) : 6; b.style.height = h + 'px'; b.style.opacity = on ? 1 : .25; }); });
+(function () { let s = ''; for (let i = 0; i < 17; i++) { const h = 14 + 80 * Math.abs(Math.sin(i * 1.3) * Math.sin(i * .4 + .5)); s += `<rect x="${i * 10}" y="${60 - h / 2}" width="6" height="${h}" rx="3" fill="#C46F8C"/>`; } $('#mp3wave').innerHTML = s; $$('.wv').forEach(e => e.innerHTML = s.replace(/x="(\d+)"/g, (m, a) => `x="${+a + 5}"`).replace(/#C46F8C/g, '#8B5CF6')); })();
+gsap.set(['#mp3', '#dl', '#flow'], { autoAlpha: 0 });
+tl.fromTo('#mp3', { autoAlpha: 0, x: -300, y: -80, scale: .3, rotate: -30 }, { autoAlpha: 1, x: 0, y: 0, scale: 1, rotate: 6, duration: .6, ease: 'back.out(1.6)' }, 52.65); sfx(52.65, 'whoosh', .5); sfx(53.1, 'pop', .8);
+tl.fromTo('#dl', { autoAlpha: 0, y: -40 }, { autoAlpha: 1, y: 0, duration: .35, ease: 'power2.out' }, 52.3);
+tl.to('#dl', { y: 30, duration: .3, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 52.65);
+tl.fromTo('#flow', { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: .4 }, 51.6);
+gsap.set(['#fl1', '#fa1', '#fl2', '#fa2', '#fl3'], { autoAlpha: .2 });
+[['#fl1', 51.7], ['#fa1', 52.0], ['#fl2', 52.2], ['#fa2', 52.9], ['#fl3', 53.32]].forEach(([s, t]) => { tl.to(s, { autoAlpha: 1, scale: 1.12, duration: .2, yoyo: true, repeat: 1 }, t); tl.to(s, { autoAlpha: 1, duration: .1 }, t + .4); });
+sfx(53.32, 'ding', .7);
+armOut(52.3);
+
+/* ================= S4 MAGIC ================= */
+wipe(54.55);
+tl.set('#tracker', { color: '#F7F0E6' }, 54.5); 
+avSet(54.5, 540, 1330, .6); tl.fromTo('#av', { y: 1330 - 627 + 300 }, { y: 1330 - 627, duration: .6, ease: 'back.out(1.5)' }, 54.6);
+tl.set(['#avDisc', '#avOrbit'], { autoAlpha: 0 }, 54.5);
+gsap.set('#s4title', { autoAlpha: 0 });
+tl.fromTo('#magicTxt .cap', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .4 }, 54.6);
+tl.fromTo('#shimmer', { autoAlpha: 0, scale: .6 }, { autoAlpha: 1, scale: 1, duration: .6, ease: 'back.out(1.8)' }, 55.5);
+sfx(54.5, 'riser', .8); sfx(55.86, 'sparkle', .9);
+(function () { for (let i = 0; i < 40; i++) { const s = document.createElement('div'); s.className = 'spark'; const r = (i * 97) % 100 / 100, q = (i * 61) % 100 / 100; s.innerHTML = '<svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M50 0 L58 42 L100 50 L58 58 L50 100 L42 58 L0 50 L42 42Z" fill="#D4B072"/></svg>'; s.style.left = (40 + r * 1000) + 'px'; s.style.top = (260 + q * 1300) + 'px'; $('#sparks').appendChild(s); tl.fromTo(s, { scale: 0, rotate: 0, autoAlpha: 1 }, { scale: .4 + r * .8, rotate: 180, duration: .7, ease: 'back.out(2)', yoyo: true, repeat: 1 }, 55.5 + q * 1.2); } })();
+tl.to('#magicTxt', { autoAlpha: 0, scale: 1.2, duration: .3 }, 56.6);
+tl.set('#s4title', { autoAlpha: 1 }, 56.7);
+tl.fromTo('#s4num', { autoAlpha: 0, x: -80 }, { autoAlpha: 1, x: 0, duration: .6, ease: 'power3.out' }, 56.76); sfx(56.76, 'thud', .8);
+lines('#s4title', 56.85);
+tl.to('#av', { autoAlpha: 0, duration: .01 }, 58.25);
+// S4c laptop
+iris(58.35, '#B05E7E');
+tl.set('#tracker', { color: '#17121A' }, 58.3);
+avSet(58.3, 540, 760, .5); tl.to('#av', { autoAlpha: 1, duration: .3 }, 58.3);
+tl.set('#av', { zIndex: 4 }, 58.3);
+tl.fromTo('#lid', { rotateX: -88 }, { rotateX: 0, duration: .9, ease: 'power3.out' }, 58.4); sfx(58.4, 'swish', .6); sfx(59.2, 'click', .5);
+tl.fromTo('#laptop', { y: 200, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5 }, 58.3);
+tl.to('#tabA', { backgroundColor: '#17121A', color: '#F7F0E6', duration: .2 }, 58.86);
+tl.to('#tabA', { backgroundColor: '#FBF6EE', color: '#17121A', duration: .2 }, 59.5);
+tl.to('#tabB', { backgroundColor: '#17121A', color: '#EBD3A2', duration: .2 }, 59.54); sfx(58.86, 'tick', .6); sfx(59.54, 'tick', .6);
+gsap.set('#scrCount', { autoAlpha: 0 });
+tl.fromTo('#scrCount', { autoAlpha: 0, scale: 3 }, { autoAlpha: 1, scale: 1, duration: .3, ease: 'power4.in' }, 61.0); sfx(61.15, 'thud', .7);
+(function () { const L = $('#scrList'); [['▶', 'reference.mp4', 'референтното видео'], ['♪', 'voiceover.mp3', 'готовият аудиозапис'], ['✎', 'prompt.txt', 'подробният промпт']].forEach(([ic, n, d], i) => { const r = document.createElement('div'); r.className = 'row'; r.style.cssText = 'display:flex;align-items:center;gap:18px;height:100px;border-bottom:2px solid #EFE5D8;font-size:28px;font-weight:700'; r.innerHTML = `<span style="width:64px;height:64px;border-radius:16px;background:#17121A;color:#EBD3A2;display:flex;align-items:center;justify-content:center;font-size:30px">${ic}</span><span>${n}<br><small style="font-weight:500;color:#8a7c74;font-size:22px">${d}</small></span><span class="ok" style="margin-left:auto;width:48px;height:48px;border-radius:50%;background:#C46F8C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px">✓</span>`; L.appendChild(r); }); })();
+gsap.set('#scrList .row', { autoAlpha: 0 });
+video($('#cvFA'), 61.5, 66.5, 7.5, 1);
+[['#fA', 62.22, -500, -200, -25], ['#fB', 64.04, 300, -500, 15], ['#fC', 65.4, 1100, -150, 25]].forEach(([s, t, x0, y0, r], i) => {
+  gsap.set(s, { left: 415, top: 920, autoAlpha: 0 });
+  tl.fromTo(s, { autoAlpha: 1, x: x0, y: y0 - 300, rotate: r, scale: 1 }, { immediateRender: false, x: -40 + i * 60, y: -260, rotate: r / 3, duration: .55, ease: 'power2.out' }, t - .7);
+  tl.to(s, { x: -100 + 0, y: 120 + i * 100 - 0, scale: .25, autoAlpha: 0, rotate: 0, duration: .35, ease: 'power3.in' }, t);
+  tl.to($$('#scrList .row')[i], { autoAlpha: 1, duration: .2 }, t + .3);
+  tl.fromTo($$('#scrList .ok')[i], { scale: 0 }, { scale: 1, duration: .3, ease: 'back.out(3)' }, t + .4);
+  sfx(t - .7, 'whoosh', .6); sfx(t + .3, 'pop', .8);
+});
+tl.to('#scrCount', { autoAlpha: 0, duration: .2 }, 62.0);
+tl.to('#av', { y: 760 - 627 - 20, duration: .3, yoyo: true, repeat: 1 }, 62.2);
+// zoom into screen
+tl.to('#laptop', { scale: 2.2, y: -600, duration: .6, ease: 'power3.in' }, 66.0);
+tl.to('#av', { autoAlpha: 0, duration: .3 }, 66.0);
+tl.to('#flash', { opacity: .9, duration: .15, yoyo: true, repeat: 1 }, 66.45); sfx(66.0, 'riser2', .6);
+// S4d dev env
+tl.set('#tracker', { color: '#F7F0E6' }, 66.45);
+tl.fromTo('#ide', { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .45 }, 66.5);
+const CODE = [
+  ['<c>// сцена 1 — кука</c>'], ["tl.from(<s>'#avatar'</s>, { y: 300, ease: <s>'back'</s> })"],
+  ["tl.to(<s>'#title'</s>, { scale: 1, duration: <n>.4</n> })"], ['<c>// глас + субтитри</c>'], ["audio.src = <s>'voiceover.mp3'</s>"],
+  ['subs.sync(transcript, { words: <n>true</n> })'], ["sfx(<n>0.5</n>, <s>'whoosh'</s>)"], ["render({ fps: <n>30</n>, size: <s>'1080x1920'</s> })"]];
+const codeTxt = CODE.map(l => l[0]);
+const plain = codeTxt.map(l => l.replace(/<\/?[csn]>/g, '')).join('\n');
+function fmtCode(s) { // re-apply highlighting on the typed prefix
+  let out = '', k = 0; const full = codeTxt.join('\n');
+  let i = 0; while (i < full.length && k < s.length) { if (full[i] === '<') { const j = full.indexOf('>', i); const tg = full.slice(i + 1, j); out += tg[0] === '/' ? '</span>' : `<span style="color:${{ c: '#8a7c84', s: '#EBD3A2', n: '#E59BB2' }[tg]}">`; i = j + 1; continue; } out += esc(full[i]); i++; k++; }
+  const opens = (out.match(/<span/g) || []).length - (out.match(/<\/span>/g) || []).length; return out + '</span>'.repeat(Math.max(0, opens));
+}
+typer('#code', plain, 66.7, 72.6, { fmt: fmtCode }); typeSfx(66.7, 72.6);
+frameFns.push(t => { if (t > 66 && t < 74.2) $('#ccStat').textContent = (t < 73.3 ? ['◐', '◓', '◑', '◒'][Math.floor(t * 8) % 4] + ' изграждам видеото…' : '✓ готово'); });
+tl.fromTo('#prev', { autoAlpha: 0, x: -60 }, { autoAlpha: 1, x: 0, duration: .45 }, 67.0);
+gsap.set(['#pv1', '#pv2', '#pv3', '#pv4', '#pvAv'], { autoAlpha: 0 });
+tl.fromTo('#pv1', { autoAlpha: 1, scale: 0, transformOrigin: '150px 300px' }, { scale: 1, duration: .5, ease: 'back.out(2)' }, 67.6);
+tl.fromTo('#pvAv', { autoAlpha: 0, y: 80 }, { autoAlpha: 1, y: 0, duration: .5 }, 68.4);
+tl.fromTo(['#pv2', '#pv3'], { autoAlpha: 1, strokeDasharray: 300, strokeDashoffset: 300 }, { strokeDashoffset: 0, duration: .5, stagger: .2 }, 69.3);
+tl.fromTo('#pv4', { autoAlpha: 1, strokeDasharray: 200, strokeDashoffset: 200 }, { strokeDashoffset: 0, duration: .4 }, 72.4);
+tl.to('#pvAv', { y: -8, duration: .25, yoyo: true, repeat: 7 }, 70.8);
+const C4 = [['код', 70.04], ['анимации', 70.76], ['движения', 71.52], ['субтитри', 72.32], ['ефекти', 73.08]];
+C4.forEach(([n, t], i) => { const c = document.createElement('div'); c.className = 'chip'; c.style.cssText += `position:relative;display:inline-block;margin:0 14px 18px 0;background:${i % 2 ? '#F7F0E6' : '#C46F8C'};color:${i % 2 ? '#17121A' : '#fff'};font-size:40px`; c.textContent = n + ' ✓'; $('#chips4').appendChild(c); tl.fromTo(c, { autoAlpha: 0, scale: .2 }, { autoAlpha: 1, scale: 1, duration: .35, ease: 'back.out(2.5)' }, t); sfx(t, 'pop', .7); });
+// timeline tracks
+(function () {
+  const T = $('#tl'); T.style.height = '0px';
+  const tracks = [['ВИДЕО', '#C46F8C', [[0, 160], [170, 230], [410, 190], [610, 220]]], ['ГЛАС', '#8B5CF6', [[0, 830]]], ['СУБТИТРИ', '#D4B072', [[20, 110], [140, 90], [240, 130], [380, 100], [490, 140], [640, 120]]], ['SFX', '#F7F0E6', [[40, 30], [200, 30], [330, 30], [520, 30], [700, 30]]]];
+  const box = document.createElement('div'); box.id = 'tlbox'; box.style.cssText = 'position:absolute;left:0;top:-330px;width:980px;height:310px;border-radius:26px;background:#1C1620;box-shadow:0 0 0 2px #2c2430;overflow:hidden'; T.appendChild(box);
+  tracks.forEach(([n, c, cl], r) => {
+    const lab = document.createElement('div'); lab.style.cssText = `position:absolute;left:20px;top:${32 + r * 72}px;width:120px;font-weight:800;font-size:18px;letter-spacing:.12em;color:#a99`; lab.textContent = n; box.appendChild(lab);
+    cl.forEach(([x, w], j) => { const d = document.createElement('div'); d.className = 'clip'; d.style.cssText = `position:absolute;left:${140 + x}px;top:${18 + r * 72}px;width:${w}px;height:54px;border-radius:12px;background:${c};opacity:.92`; if (n === 'ГЛАС') d.innerHTML = '<svg width="830" height="64">' + Array.from({ length: 100 }, (_, k) => { const h = 6 + 46 * Math.abs(Math.sin(k * 1.3) * Math.sin(k * .23 + .4)); return `<rect x="${k * 8.3 + 2}" y="${32 - h / 2}" width="4" height="${h}" rx="2" fill="#fff" opacity=".8"/>`; }).join('') + '</svg>'; box.appendChild(d); tl.fromTo(d, { autoAlpha: 0, x: 400, scaleX: .3, transformOrigin: '0 50%' }, { autoAlpha: .92, x: 0, scaleX: 1, duration: .35, ease: 'power3.out' }, 67.3 + r * .9 + j * .18); });
+  });
+  const ph = document.createElement('div'); ph.id = 'playhead'; ph.style.cssText = 'position:absolute;left:140px;top:0;width:4px;height:310px;background:#fff;box-shadow:0 0 12px #fff'; box.appendChild(ph);
+  tl.fromTo(ph, { x: 0 }, { x: 830, duration: 6.5, ease: 'none' }, 67.2);
+})();
+$('#tl').style.top = '1410px';
+$('#prev').style.top = '735px'; gsap.set('#prev', { scale: .62, transformOrigin: '0 0' }); Object.assign($('#chips4').style, { top: '745px', left: '260px', width: '780px' });
+tl.fromTo('#tlbox', { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .45 }, 67.1);
+// S4e render
+(function () { const S = $('#strip'); for (let i = 0; i < 5; i++) { const c = document.createElement('canvas'); c.width = 270; c.height = 480; c.style.cssText = 'width:176px;height:313px;border-radius:18px;margin-top:90px;box-shadow:0 0 0 2px #2c2430'; S.appendChild(c); video(c, 73.9, 78.6, 1.5 + i * 5.3, .6); tl.fromTo(c, { autoAlpha: 0, y: 60, scale: .8 }, { autoAlpha: 1, y: 0, scale: 1, duration: .4, ease: 'back.out(1.6)' }, 74.1 + i * .6); sfx(74.1 + i * .6, 'tick', .5); } })();
+tl.fromTo('#prog', { width: '0%' }, { width: '100%', duration: 3.3, ease: 'power1.inOut' }, 74.0);
+frameFns.push(t => { if (t > 73.5 && t < 78.7) $('#pct').textContent = Math.round(gsap.utils.clamp(0, 1, gsap.parseEase('power1.inOut')((t - 74) / 3.3)) * 100) + '%'; });
+gsap.set('#done', { autoAlpha: 0 }); pop('#done', 77.4, .45); sfx(77.4, 'ding', .9); sfx(77.42, 'sparkle', .6);
+
+/* ================= S5 RESULT ================= */
+tl.to('#flash', { opacity: 1, duration: .2, yoyo: true, repeat: 1 }, 78.25); sfx(78.25, 'whoosh', .8);
+tl.set('#tracker', { color: '#17121A' }, 78.4); tl.set('#tracker', { color: '#17121A' }, 86.0); tl.set('#tracker', { color: '#17121A' }, 93.0);
+video($('#phR canvas'), 78.4, 86.2, 0.2, 1);
+tl.to('#rays', { rotate: 40, duration: 8, ease: 'none' }, 78.4);
+gsap.set(['#iA', '#iB', '#iC'], { left: 465, top: 845, autoAlpha: 0 });
+[['#iA', -300, -200], ['#iB', 300, -260], ['#iC', 0, 300]].forEach(([s, x, y], i) => {
+  tl.fromTo(s, { autoAlpha: 1, x, y, scale: 1, rotate: x / 10 }, { immediateRender: false, x: -160, y: 0, rotate: 0, scale: .3, duration: .7, ease: 'power3.in' }, 78.45 + i * .08);
+  tl.set(s, { autoAlpha: 0 }, 79.25);
+});
+tl.fromTo('#phR', { autoAlpha: 0, scale: .2, rotateY: 90 }, { autoAlpha: 1, scale: 1, rotateY: 0, duration: .7, ease: 'back.out(1.5)' }, 79.2); sfx(79.25, 'thud', .8); sfx(79.3, 'sparkle', 1);
+tl.fromTo('#shineBar', { x: 0 }, { x: 900, duration: .8, ease: 'power2.inOut' }, 79.9);
+tl.fromTo('#shineBar', { x: 0 }, { x: 900, duration: .8, ease: 'power2.inOut' }, 83.0);
+tl.fromTo('#r1 .cap', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .4 }, 78.5);
+lines('#r1', 79.1);
+avSet(78.4, 820, 1370, .46); tl.set('#av', { autoAlpha: 1, zIndex: 30 }, 78.4); tl.fromTo('#av', { x: 820 - 627 + 500 }, { x: 820 - 627, duration: .7, ease: 'power3.out' }, 78.5);
+tl.set(['#avDisc'], { autoAlpha: 0 }, 78.4);
+gsap.set(['#k1', '#k2', '#k3'], { autoAlpha: 0 });
+pop('#k1', 80.46, .45); pop('#k2', 82.42, .45); sfx(80.46, 'pop', .7); sfx(82.42, 'pop', .7);
+tl.fromTo('#k3', { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: .45 }, 83.88); sfx(83.88, 'tick', .7);
+armIn(80.0, -1); armWiggle(81.0, 2); armOut(83.4);
+// S5b
+tl.to('#flash', { opacity: .7, duration: .12, yoyo: true, repeat: 1 }, 85.9);
+avSet(86.0, 540, 1300, .82); tl.fromTo('#av', { scale: .6 }, { scale: .82, duration: .6, ease: 'back.out(1.4)' }, 86.0); sfx(86.0, 'whoosh', .5);
+tl.set('#avDisc', { autoAlpha: 1 }, 86.0); tl.fromTo('#avDisc', { scale: 0 }, { scale: 1, duration: .6, ease: 'back.out(1.4)' }, 86.0);
+gsap.set(['#nn', '#n1', '#n2', '#n3'], { autoAlpha: 0 });
+tl.fromTo('#nn', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .4 }, 87.36);
+[['#n1', 88.2], ['#n2', 89.06], ['#n3', 89.82]].forEach(([s, t]) => { tl.fromTo(s, { autoAlpha: 0, scale: 1.8 }, { autoAlpha: 1, scale: 1, duration: .25, ease: 'power4.in' }, t - .1); sfx(t + .1, 'thud', .6); tl.to(s + ' .strike', { scaleX: 1, duration: .2 }, t + .55); sfx(t + .55, 'swish', .5); });
+tl.to(['#n1', '#n2', '#n3'], { y: -30, autoAlpha: .5, duration: .4 }, 91.1);
+tl.to('#av', { scale: .88, duration: 2, ease: 'sine.inOut' }, 91.0);
+
+/* ================= S6 CTA ================= */
+iris(93.1, '#C46F8C');
+avSet(93.05, 540, 1340, .7);
+tl.set('#avOrbit', { autoAlpha: 1 }, 93.05); tl.fromTo('#avOrbit', { rotate: 0, scale: .8 }, { rotate: 60, scale: 1, duration: 12, ease: 'none' }, 93.05);
+lines('#q1', 93.12, .25); sfx(93.12, 'thud', .6);
+linesOut('#q1', 95.7);
+gsap.set(['#q2', '#followBtn', '#saveBtn'], { autoAlpha: 0 });
+tl.set('#q2', { autoAlpha: 1 }, 95.9); lines('#q2', 96.0);
+tl.fromTo('#q2 > div:last-child', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: .4 }, 96.3);
+pop('#followBtn', 96.04, .45); sfx(96.04, 'pop', .8);
+tl.to('#fbIn', { scale: .9, duration: .1, yoyo: true, repeat: 1 }, 96.66); sfx(96.66, 'click', 1);
+tl.set('#fbIn', { textContent: '✓ СЛЕДВАШ', backgroundColor: '#17121A', color: '#EBD3A2' }, 96.75);
+pop('#saveBtn', 96.9, .45); sfx(96.9, 'pop', .7);
+tl.to('#saveBtn', { scale: .88, duration: .1, yoyo: true, repeat: 1 }, 97.2); sfx(97.2, 'click', 1);
+tl.set('#bmk', { attr: { fill: '#17121A' } }, 97.3);
+(function () { for (let i = 0; i < 12; i++) { const h = document.createElement('div'); h.style.cssText = `position:absolute;left:${120 + (i * 83) % 860}px;top:1250px;width:60px;height:54px`; h.innerHTML = `<svg viewBox="0 0 100 90" width="100%" height="100%"><path d="M50 86 C20 62 4 46 4 26 C4 12 15 3 28 3 C38 3 46 9 50 17 C54 9 62 3 72 3 C85 3 96 12 96 26 C96 46 80 62 50 86Z" fill="${['#F7F0E6', '#17121A', '#D4B072'][i % 3]}"/></svg>`; $('#hearts').appendChild(h); tl.fromTo(h, { y: 0, autoAlpha: 0, scale: .4 }, { y: -700 - (i % 4) * 120, x: (i % 2 ? 1 : -1) * 60, autoAlpha: 1, scale: 1, rotate: (i % 2 ? 20 : -20), duration: 2.2, ease: 'power1.out' }, 97.3 + i * .1); tl.to(h, { autoAlpha: 0, duration: .4 }, 99.1 + i * .1); } })();
+sfx(97.3, 'sparkle', .8);
+// S7 end brand
+tl.to('#flash', { opacity: .8, duration: .15, yoyo: true, repeat: 1 }, 99.8); sfx(99.8, 'whoosh', .6);
+avSet(99.95, 540, 860, .72); tl.set('#avDisc', { autoAlpha: 1 }, 99.95);
+tl.fromTo('#nextQ', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: .5 }, 100.0);
+gsap.set('#brand', { autoAlpha: 0 });
+tl.fromTo('#brand', { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .8, ease: 'power3.out' }, 103.6); sfx(103.6, 'ding', .8); sfx(103.65, 'sparkle', .6);
+(function () { // poster-style floating icons around the avatar
+  const IC = [
+    ['<rect x="18" y="18" width="64" height="64" rx="12" fill="#C46F8C" stroke="#17121A" stroke-width="7"/><text x="50" y="61" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="30" fill="#D4B072">AI</text><path d="M30 18 V6 M50 18 V6 M70 18 V6 M30 94 V82 M50 94 V82 M70 94 V82 M18 30 H6 M18 50 H6 M18 70 H6 M94 30 H82 M94 50 H82 M94 70 H82" stroke="#17121A" stroke-width="6"/>', 120, 420],
+    ['<rect x="8" y="16" width="84" height="66" rx="10" fill="#F7F0E6" stroke="#17121A" stroke-width="7" transform="rotate(8 50 50)"/><path d="M18 74 L42 46 L58 64 L68 54 L84 74Z" fill="#17121A" transform="rotate(8 50 50)"/><circle cx="70" cy="34" r="8" fill="#D4B072"/>', 860, 430],
+    ['<path d="M50 10 C26 10 8 28 8 50 C8 74 28 90 46 90 C56 90 56 80 52 74 C48 66 54 60 62 60 H74 C86 60 92 52 92 42 C92 24 74 10 50 10Z" fill="#F7F0E6" stroke="#17121A" stroke-width="7"/><circle cx="30" cy="46" r="7" fill="#17121A"/><circle cx="44" cy="28" r="7" fill="#C46F8C"/><circle cx="66" cy="30" r="7" fill="#D4B072"/>', 110, 1020],
+    ['<path d="M50 4 L58 42 L96 50 L58 58 L50 96 L42 58 L4 50 L42 42Z" fill="#D4B072" stroke="#17121A" stroke-width="5"/>', 880, 1010]];
+  IC.forEach(([svg, x, y], i) => { const d = document.createElement('div'); d.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:110px;height:110px`; d.innerHTML = `<svg viewBox="0 0 100 100" width="100%" height="100%">${svg}</svg>`; $('#icons').appendChild(d); tl.fromTo(d, { scale: 0, rotate: -40 }, { scale: 1, rotate: 0, duration: .5, ease: 'back.out(2.5)' }, 100.3 + i * .15); tl.to(d, { y: -14, duration: 1.2, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 100.9 + i * .2); sfx(100.3 + i * .15, 'pop', .4); });
+})();
+tl.set('#av', { zIndex: 30 }, 0);
+tl.to({}, { duration: .01 }, END);
+
+/* ---------- corner labels (reference-video style) ---------- */
+const PARTS = [[0, '01 — кука'], [11.75, '02 — идеята'], [34.7, '03 — гласът'], [54.5, '04 — магията'], [78.3, '05 — резултатът'], [93.0, '06 — за теб']];
+frameFns.push(t => { let k = 0; PARTS.forEach((p, i) => { if (t >= p[0]) k = i; }); if ($('#tracker')._k !== k) { $('#tracker')._k = k; $('#cL').textContent = '// ' + PARTS[k][1]; $('#cR').textContent = 'ЧАСТ ' + (k + 1) + '/6'; } });
+/* ---------- subtitles ---------- */
+let curSub = -1;
+frameFns.push(t => {
+  const i = window.SUBS.findIndex(c => t >= c.s - .02 && t < c.e);
+  const el = $('#subs');
+  if (i !== curSub) { curSub = i; el.innerHTML = i < 0 ? '' : '<div class="sb">' + window.SUBS[i].words.map(w => `<span>${esc(w.w)}</span>`).join(' ') + '</div>'; el._pop = i < 0 ? 0 : window.SUBS[i].s; }
+  if (i >= 0) { const sp = el.firstChild.children; window.SUBS[i].words.forEach((w, k) => { sp[k].className = t >= w.s - .03 ? (t < w.e ? 'on' : '') : 'fut'; }); const p = Math.min(1, (t - el._pop) / .12); el.style.transform = `scale(${.94 + .06 * p})`; el.style.opacity = p; }
+});
+
+/* ---------- seek ---------- */
+window.DUR = END;
+window.seek = t => { tl.seek(t, false); for (const f of frameFns) f(t); };
+Promise.all([document.fonts.ready, ...Array.from({ length: NREF }, (_, i) => new Promise(r => { const im = new Image(); im.onload = () => { REF[i] = im; r(); }; im.onerror = r; im.src = `assets/ref/f${String(i + 1).padStart(4, '0')}.jpg`; })), ...$$('img').map(im => im.decode ? im.decode().catch(() => { }) : 0)]).then(() => { window.seek(0); window.ready = true; });
+if (location.hash === '#play') { document.body.onclick = () => { const a = new Audio('out/final_audio.m4a'); a.play(); const t0 = performance.now(); (function f() { window.seek((performance.now() - t0) / 1000); requestAnimationFrame(f); })(); }; }
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "how-i-made-ai-video",
+  "private": true,
+  "description": "Instagram Reel: Как създадох AI видео безплатно — HTML/GSAP animation rendered with Playwright + ffmpeg",
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.5",
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
+    "gsap": "^3.15.1"
+  }
+}

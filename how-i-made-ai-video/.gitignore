@@ -1,0 +1,4 @@
+node_modules/
+out/*
+!out/how-i-made-ai-video.mp4
+assets/ref/
