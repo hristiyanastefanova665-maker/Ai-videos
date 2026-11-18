@@ -1,2 +1,4 @@
 node_modules/
 out/stills/
+hristiyana-creative/intro/out/*
+!hristiyana-creative/intro/out/hristiyana-intro-reel.mp4

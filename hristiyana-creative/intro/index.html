@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Hristiyana – Intro Reel</title>
+<link rel="stylesheet" href="../node_modules/@fontsource/montserrat/500.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/montserrat/600.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/montserrat/700.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/montserrat/800.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/montserrat/900.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/playfair-display/400-italic.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/playfair-display/700-italic.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/playfair-display/700.css">
+<style>
+:root{--r:#C66F8C;--k:#171318;--c:#FFF9F5;--b:#E8D7CF;--g:#D6B27C;--r2:#E59AB2;--k2:#231D25}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;overflow:hidden}
+#stage{font-feature-settings:"locl" 0;position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--k);font-family:Montserrat,sans-serif;color:var(--k)}
+.L{position:absolute;inset:0;overflow:hidden}
+.cam{position:absolute;inset:0;transform-origin:540px 860px}
+.a{position:absolute}
+.pp{visibility:hidden}
+svg{display:block;overflow:visible}
+.ic{position:absolute;filter:drop-shadow(0 10px 0 rgba(23,19,24,.16))}
+.ic svg{width:100%;height:100%}
+
+/* backgrounds */
+.bg-dark{background:radial-gradient(ellipse at 50% 38%,#2a2129 0%,#171318 62%)}
+.bg-cream{background:var(--c)}
+.bg-beige{background:var(--b)}
+.bg-rose{background:radial-gradient(ellipse at 50% 42%,#d07f99 0%,#C66F8C 55%,#b45f7b 100%)}
+.dots{position:absolute;inset:-40px;background-image:radial-gradient(rgba(214,178,124,.22) 2px,transparent 2.5px);background-size:44px 44px}
+.dots.k{background-image:radial-gradient(rgba(23,19,24,.10) 2px,transparent 2.5px)}
+.dots.c{background-image:radial-gradient(rgba(255,249,245,.16) 2px,transparent 2.5px)}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.06;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* type */
+.h-serif{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.h-sans{font-family:Montserrat;font-weight:900;letter-spacing:-.01em;line-height:.98;text-transform:uppercase}
+.lbl{font-family:Montserrat;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.card{background:var(--c);border:5px solid var(--k);border-radius:28px;box-shadow:0 14px 0 rgba(23,19,24,.18)}
+.chipT{display:inline-flex;align-items:center;gap:14px;padding:16px 28px;border:4px solid var(--k);border-radius:999px;background:var(--c);font:800 38px Montserrat;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;box-shadow:0 10px 0 rgba(23,19,24,.18)}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* captions */
+#caps{position:absolute;left:0;right:0;top:250px;display:flex;justify-content:center;z-index:50;pointer-events:none}
+#capBox{max-width:960px;padding:18px 30px 20px;border-radius:26px;background:rgba(23,19,24,.94);box-shadow:0 12px 30px rgba(0,0,0,.25),inset 0 0 0 2px rgba(214,178,124,.35);text-align:center;font:800 50px/1.18 Montserrat;color:var(--c);letter-spacing:-.005em}
+#capBox .w{display:inline-block;margin:0 .14em;opacity:.38;transition:none}
+#capBox .w.on{opacity:1}
+#capBox .w.r.on{color:var(--r2)}
+#capBox .w.g.on{color:var(--g)}
+
+/* presenter */
+#pres{position:absolute;left:0;top:0;width:1254px;height:1100px;transform-origin:0 0;z-index:30}
+#presIn{position:absolute;inset:0;transform-origin:600px 900px}
+#presImg{position:absolute;inset:0;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 960px,transparent 1080px)}
+#presImg img{width:1254px;height:1100px}
+#face{position:absolute;left:0;top:0}
+#pshadow{position:absolute;left:150px;top:250px;width:950px;height:850px;border-radius:50%;background:radial-gradient(closest-side,rgba(198,111,140,.55),rgba(198,111,140,0));filter:blur(10px)}
+.arm{position:absolute;left:0;top:0}
+
+/* transitions */
+#wipes{position:absolute;inset:0;z-index:60;pointer-events:none}
+.wp{position:absolute;left:-600px;top:-200px;width:2300px;height:2400px;transform:rotate(-14deg) translateX(-2400px)}
+#flash{position:absolute;inset:0;background:var(--c);opacity:0;z-index:61;pointer-events:none}
+#vign{position:absolute;inset:0;z-index:55;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.22) 100%)}
+</style>
+</head>
+<body>
+<div id="stage" lang="en">
+  <div id="world" class="L"></div>
+  <div id="pres"><div id="presIn">
+    <div id="pshadow"></div>
+    <div id="presImg"><img src="assets/avatar.png"></div>
+    <svg id="face" width="1254" height="1100" viewBox="0 0 1254 1100"></svg>
+  </div></div>
+  <div id="fx" class="L" style="z-index:40;pointer-events:none"></div>
+  <div id="vign"></div>
+  <div id="caps"><div id="capBox"></div></div>
+  <div id="wipes"></div>
+  <div id="flash"></div>
+</div>
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="icons.js"></script>
+<script src="words.js"></script>
+<script src="env.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
