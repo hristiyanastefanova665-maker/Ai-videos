@@ -9,8 +9,12 @@ headlight / wheel masks, neon badge (blue to gold), car-on-bonnet and stacked ca
 - `src/render.py`: renders all scenes and effects -> `build/frames.mp4`
 - `output/bmw-e87-118d-edit.mp4`: final video with the reference track's audio.
 
-```
-python3 src/cutout.py rmbg.onnx build assets/*.jpg
-python3 src/render.py 18.13 build/frames.mp4
-ffmpeg -i build/frames.mp4 -i reference.mp4 -map 0:v -map 1:a -c:v copy -shortest output/bmw-e87-118d-edit.mp4
-```
+## Version 2: from raw AI video clips
+
+1. `src/gen_clip.py` / `src/gen_all.sh`: raw clips in `raw/` made with Wan 2.2 image-to-video on the free
+   Hugging Face ZeroGPU space (`zerogpu-aoti/wan2-2-fp8da-aoti-faster`), from portrait start frames of the car.
+2. Beat map: OpenMontage `music-to-video` skill's `analyze-beatgrid.py` (161 BPM, a cut on every bar) -> `build/audiomap.json`.
+3. `src/clip_masks.py`: per-frame cut-outs of the clips (RMBG-1.4).
+4. `src/render_clips.py`: the edit itself -> `output/bmw-e87-118d-edit.mp4`.
+
+`src/render.py` is the first, stills-only version (also provides the shared effect helpers).
