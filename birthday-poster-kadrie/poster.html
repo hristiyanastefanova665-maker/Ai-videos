@@ -17,59 +17,70 @@ html, body { width: 1000px; height: 1414px; background: var(--ink); overflow: hi
 
 .poster { position: relative; width: 1000px; height: 1414px; overflow: hidden; background: var(--ink); }
 
-/* full-bleed photo, no frame; its top edge melts into the dark band */
-.photo {
-  position: absolute; left: 0; top: 81px; width: 1000px; height: 1333px;
+/* soft blurred copy of the same photo fills the edges, so the sharp photo has no frame */
+.bg {
+  position: absolute; left: -130px; top: 120px; width: 1260px; height: 1680px;
   background: url(assets/family.png) center / 100% 100% no-repeat;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 70px);
-          mask-image: linear-gradient(180deg, transparent 0, #000 70px);
+  filter: blur(36px) brightness(.78) saturate(1.1);
 }
-/* cinematic shading for legibility: top-left and bottom only, faces stay untouched */
+.photo {
+  position: absolute; left: 110px; top: 374px; width: 780px; height: 1040px;
+  background: url(assets/family.png) center / 100% 100% no-repeat;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 70px, #000 710px, transparent 780px),
+                      linear-gradient(180deg, transparent 0, #000 110px);
+  -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(90deg, transparent 0, #000 70px, #000 710px, transparent 780px),
+                      linear-gradient(180deg, transparent 0, #000 110px);
+          mask-composite: intersect;
+}
+/* side extensions: the photo's own edge strips, stretched and softened */
+.side {
+  position: absolute; top: 374px; width: 190px; height: 1040px;
+  background-image: url(assets/family.png); background-size: 4900px 1040px; background-repeat: no-repeat;
+  filter: blur(10px);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 110px); mask-image: linear-gradient(180deg, transparent 0, #000 110px);
+}
+.side.l { left: -10px; background-position: 0 0; }
+.side.r { left: 820px; width: 180px; background-size: 1716px 1040px; background-position: -1494px 0;
+  transform: scaleX(-1); filter: blur(5px) brightness(.97); }
 .shade-top {
-  position: absolute; inset: 0 0 auto 0; height: 330px;
-  background:
-    radial-gradient(ellipse 75% 100% at 22% 0%, rgba(34, 16, 43, .78), transparent 75%),
-    linear-gradient(180deg, rgba(34, 16, 43, .9) 0, rgba(34, 16, 43, .55) 110px, rgba(34, 16, 43, 0) 245px);
-}
-.shade-bottom {
-  position: absolute; inset: auto 0 0 0; height: 150px;
-  background: linear-gradient(0deg, rgba(34, 16, 43, .92) 0, rgba(34, 16, 43, .6) 55px, rgba(34, 16, 43, 0) 100%);
+  position: absolute; inset: 0 0 auto 0; height: 520px;
+  background: linear-gradient(180deg, rgba(34, 16, 43, 1) 0, rgba(34, 16, 43, .92) 190px,
+                              rgba(34, 16, 43, .6) 340px, rgba(34, 16, 43, 0) 470px);
 }
 #fx { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-/* ---------- heading (top-left, clear of heads and the neon crown) ---------- */
-.title { position: absolute; left: 56px; top: 34px; z-index: 5; }
+/* ---------- all text together, large, above the family ---------- */
+.text { position: absolute; left: 0; right: 0; top: 34px; text-align: center; z-index: 5; }
 .line1 {
-  font-family: "Cormorant"; font-weight: 500; font-size: 44px; letter-spacing: 1.5px; line-height: 1;
-  color: #f8eedd; text-shadow: 0 2px 10px rgba(20, 6, 26, .8);
+  font-family: "Cormorant"; font-weight: 600; font-size: 66px; letter-spacing: 1.5px; line-height: 1.05;
+  color: #f8eedd; text-shadow: 0 2px 12px rgba(20, 6, 26, .8);
 }
 .name {
-  font-family: "GreatVibes"; font-size: 128px; line-height: 1.1; margin: -4px 0 0 34px; padding: 0 30px 0 0;
+  display: inline-block; font-family: "GreatVibes"; font-size: 186px; line-height: 1.02; padding: 0 40px;
   background: var(--gold); -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 14px rgba(255, 214, 140, .35)) drop-shadow(0 3px 5px rgba(20, 6, 26, .75));
+  filter: drop-shadow(0 0 16px rgba(255, 214, 140, .35)) drop-shadow(0 3px 5px rgba(20, 6, 26, .75));
 }
-
-/* ---------- wish ---------- */
 .wish {
-  position: absolute; left: 0; right: 0; bottom: 30px; text-align: center; z-index: 5;
-  font-family: "Cormorant"; font-style: italic; font-weight: 500; font-size: 34px; letter-spacing: .4px;
-  color: #f8eedd; text-shadow: 0 2px 10px rgba(20, 6, 26, .9);
+  margin-top: 4px; font-family: "Cormorant"; font-style: italic; font-weight: 600; font-size: 50px; line-height: 1.12;
+  color: #f8eedd; text-shadow: 0 2px 12px rgba(20, 6, 26, .9);
 }
 </style>
 </head>
 <body>
 <div class="poster">
+  <div class="bg"></div>
+  <div class="side l"></div>
+  <div class="side r"></div>
   <div class="photo"></div>
   <div class="shade-top"></div>
-  <div class="shade-bottom"></div>
   <canvas id="fx" width="2000" height="2828"></canvas>
 
-  <div class="title">
+  <div class="text">
     <div class="line1">Честит рожден ден,</div>
     <div class="name">Кадрие!</div>
+    <div class="wish">Пожелаваме ти много здраве,<br>щастие и късмет!</div>
   </div>
-
-  <div class="wish">Пожелаваме ти много здраве, щастие и късмет!</div>
 </div>
 
 <script>
@@ -80,14 +91,14 @@ ctx.scale(2, 2);
 
 // soft warm bokeh only in the dark top band (right side, beside the title)
 for (let i = 0; i < 18; i++) {
-  const x = 560 + rnd() * 430, y = rnd() * 120, r = 5 + rnd() * 16;
+  const x = rnd() > .5 ? 20 + rnd() * 140 : 840 + rnd() * 140, y = 30 + rnd() * 380, r = 5 + rnd() * 16;
   const g = ctx.createRadialGradient(x, y, 0, x, y, r);
   g.addColorStop(0, `rgba(255,220,160,${.2 + rnd() * .2})`); g.addColorStop(1, 'rgba(255,220,160,0)');
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
 }
 // fine gold dust in the top band
 for (let i = 0; i < 90; i++) {
-  const x = rnd() * 1000, y = rnd() * 150, r = .4 + rnd() * 1.2;
+  const x = rnd() * 1000, y = rnd() * 420, r = .4 + rnd() * 1.2;
   ctx.fillStyle = `rgba(255,${215 + rnd() * 30},${150 + rnd() * 60},${.3 + rnd() * .5})`;
   ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
 }
@@ -102,7 +113,7 @@ function star(x, y, s, a) {
   ctx.restore();
 }
 // sparkles kept clear of the text and of every face
-[[612, 40, 11], [880, 30, 8], [960, 92, 6], [180, 1392, 6], [820, 1392, 6]]
+[[80, 70, 11], [925, 60, 9], [140, 330, 7], [880, 320, 8]]
   .forEach(([x, y, s]) => star(x, y, s, .9));
 document.fonts.ready.then(() => document.body.dataset.ready = '1');
 </script>
