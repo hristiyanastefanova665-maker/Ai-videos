@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Kadrie Birthday Poster</title>
+<style>
+@font-face { font-family: "GreatVibes"; src: url(fonts/GreatVibes-Regular.ttf); }
+@font-face { font-family: "Cormorant"; src: url(fonts/CormorantGaramond.ttf); font-weight: 300 700; }
+@font-face { font-family: "Cormorant"; src: url(fonts/CormorantGaramond-Italic.ttf); font-style: italic; font-weight: 300 700; }
+
+:root {
+  --gold: linear-gradient(100deg, #9c6b1e 0%, #e9c46a 22%, #fff3c4 40%, #d9a94a 58%, #f6dc93 76%, #a87422 100%);
+  --plum: #2b1438;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1000px; height: 1414px; background: var(--plum); overflow: hidden; }
+
+.poster {
+  position: relative; width: 1000px; height: 1414px; overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 52%, rgba(255, 225, 170, .35), transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 0%, #6b3f8c 0%, transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, #5a3378 0%, transparent 70%),
+    linear-gradient(180deg, #3a1d4f 0%, #4b2766 45%, #3a1d4f 100%);
+}
+/* soft bokeh & sparkles canvas */
+#fx { position: absolute; inset: 0; }
+
+/* thin gold inner border */
+.border {
+  position: absolute; inset: 22px; border: 1.5px solid rgba(233, 196, 106, .75);
+  border-radius: 6px;
+}
+.border::after {
+  content: ""; position: absolute; inset: 8px; border: .75px solid rgba(233, 196, 106, .45); border-radius: 3px;
+}
+
+/* ---------- heading ---------- */
+.title { position: absolute; top: 58px; left: 0; right: 0; text-align: center; z-index: 5; }
+.line1 {
+  font-family: "Cormorant"; font-weight: 600; font-size: 58px; letter-spacing: 2.5px;
+  background: var(--gold); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(20, 5, 30, .55));
+}
+.name {
+  font-family: "GreatVibes"; font-size: 150px; line-height: 1.05; margin-top: 2px;
+  background: var(--gold); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 18px rgba(255, 220, 150, .45)) drop-shadow(0 4px 6px rgba(20, 5, 30, .6));
+  padding: 0 40px;
+}
+
+/* ---------- photo ---------- */
+.frame {
+  position: absolute; left: 50%; top: 330px; width: 660px; height: 880px; transform: translateX(-50%);
+  z-index: 3;
+}
+.frame .glow {
+  position: absolute; inset: -40px; border-radius: 370px 370px 40px 40px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 226, 170, .55), transparent 70%);
+  filter: blur(20px);
+}
+.frame .gold {
+  position: absolute; inset: -14px; border-radius: 344px 344px 22px 22px;
+  background: linear-gradient(135deg, #a87422, #f6dc93 25%, #fff6d6 45%, #c99838 65%, #f2d488 85%, #9c6b1e);
+  box-shadow: 0 25px 60px rgba(10, 0, 20, .55);
+}
+.frame .mat {
+  position: absolute; inset: -6px; border-radius: 336px 336px 16px 16px; background: #f7ecdc;
+}
+.frame .photo {
+  position: absolute; inset: 0; border-radius: 330px 330px 12px 12px; overflow: hidden;
+  background: url(assets/family.png) center / cover no-repeat;
+}
+
+/* ---------- wish ---------- */
+.wish {
+  position: absolute; left: 0; right: 0; top: 1252px; text-align: center; z-index: 5;
+  font-family: "Cormorant"; font-style: italic; font-weight: 500; font-size: 37px; letter-spacing: .5px;
+  color: #f7ecdc; text-shadow: 0 2px 8px rgba(20, 5, 30, .7);
+}
+.divider { position: absolute; left: 50%; transform: translateX(-50%); top: 1318px; z-index: 5; }
+
+/* balloons */
+svg.balloons { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <canvas id="fx" width="2000" height="2828"></canvas>
+  <div class="border"></div>
+
+  <div class="title">
+    <div class="line1">Честит рожден ден,</div>
+    <div class="name">Кадрие!</div>
+  </div>
+
+  <div class="frame">
+    <div class="glow"></div>
+    <div class="gold"></div>
+    <div class="mat"></div>
+    <div class="photo"></div>
+  </div>
+
+  <svg class="balloons" id="balloons" viewBox="0 0 1000 1414" xmlns="http://www.w3.org/2000/svg"></svg>
+
+  <div class="wish">Пожелаваме ти много здраве, щастие и късмет!</div>
+  <svg class="divider" width="260" height="30" viewBox="0 0 260 30">
+    <defs><linearGradient id="dg" x1="0" x2="1"><stop offset="0" stop-color="#e9c46a" stop-opacity="0"/><stop offset=".5" stop-color="#f6dc93"/><stop offset="1" stop-color="#e9c46a" stop-opacity="0"/></linearGradient></defs>
+    <path d="M10 15 H112 M148 15 H250" stroke="url(#dg)" stroke-width="1.5"/>
+    <path d="M130 4 L134 13 L143 15 L134 17 L130 26 L126 17 L117 15 L126 13 Z" fill="#f6dc93"/>
+  </svg>
+</div>
+
+<script>
+// ---------- deterministic random ----------
+let seed = 7;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+// ---------- balloons ----------
+const svg = document.getElementById('balloons');
+const NS = 'http://www.w3.org/2000/svg';
+const palettes = {
+  lilac:  ['#f1dcff', '#c79ae6', '#8d55b8', '#5a2a80'],
+  violet: ['#e3c8ff', '#a66fd6', '#6f3aa0', '#3f1a5e'],
+  gold:   ['#fff6d2', '#efcd78', '#b8862e', '#6e4a12'],
+  champ:  ['#fffaf0', '#f3e2c4', '#d4b98e', '#9a7f58'],
+};
+let defs = document.createElementNS(NS, 'defs'); svg.appendChild(defs);
+Object.entries(palettes).forEach(([k, c]) => {
+  defs.insertAdjacentHTML('beforeend', `
+    <radialGradient id="b-${k}" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="${c[0]}"/><stop offset="0.35" stop-color="${c[1]}"/>
+      <stop offset="0.8" stop-color="${c[2]}"/><stop offset="1" stop-color="${c[3]}"/>
+    </radialGradient>`);
+});
+defs.insertAdjacentHTML('beforeend', `
+  <filter id="bs" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#14051f" flood-opacity=".45"/></filter>
+  <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>`);
+
+function balloon(x, y, r, pal, rot = 0, blur = false, string = true) {
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('transform', `translate(${x} ${y}) rotate(${rot})`);
+  g.setAttribute('filter', blur ? 'url(#blur3)' : 'url(#bs)');
+  const h = r * 1.15;
+  let s = '';
+  if (string) s += `<path d="M0 ${h + 6} q ${r * .25} ${r * .6} 0 ${r * 1.2} t 0 ${r * 1.1}" stroke="rgba(246,220,147,.55)" stroke-width="1.2" fill="none"/>`;
+  s += `<ellipse cx="0" cy="0" rx="${r}" ry="${h}" fill="url(#b-${pal})"/>`;
+  s += `<path d="M${-r * .12} ${h - 1} L${r * .12} ${h - 1} L0 ${h + 7} Z" fill="${palettes[pal][2]}"/>`;
+  s += `<ellipse cx="${-r * .38}" cy="${-h * .42}" rx="${r * .16}" ry="${r * .28}" transform="rotate(-30 ${-r * .38} ${-h * .42})" fill="rgba(255,255,255,.55)"/>`;
+  s += `<ellipse cx="${-r * .5}" cy="${-h * .05}" rx="${r * .05}" ry="${r * .12}" fill="rgba(255,255,255,.3)"/>`;
+  g.innerHTML = s; svg.appendChild(g);
+}
+// Background (blurred, distant) balloons
+[[110, 560, 38, 'champ'], [890, 610, 34, 'lilac'], [75, 980, 30, 'gold'], [930, 1010, 36, 'champ'],
+ [160, 300, 26, 'violet'], [850, 300, 28, 'gold']]
+  .forEach(([x, y, r, p]) => balloon(x, y, r, p, 0, true, false));
+// Left cluster
+balloon(70, 400, 70, 'violet', -8);
+balloon(150, 470, 54, 'gold', 6);
+balloon(60, 540, 48, 'champ', -4);
+balloon(125, 360, 40, 'lilac', 10);
+// Right cluster
+balloon(935, 410, 72, 'lilac', 8);
+balloon(850, 470, 52, 'champ', -6);
+balloon(945, 560, 50, 'gold', 4);
+balloon(880, 360, 38, 'violet', -10);
+// Lower corners (small accents, outside the photo)
+balloon(78, 1130, 52, 'lilac', -6);
+balloon(138, 1195, 36, 'gold', 8);
+balloon(925, 1120, 54, 'violet', 6);
+balloon(866, 1190, 36, 'champ', -8);
+
+// ---------- light effects (bokeh, sparkles, confetti) ----------
+const cv = document.getElementById('fx'), ctx = cv.getContext('2d');
+ctx.scale(2, 2);
+for (let i = 0; i < 70; i++) {
+  const x = rnd() * 1000, y = rnd() * 1414, r = 6 + rnd() * 26;
+  const warm = rnd() > .45;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  const c = warm ? '255,215,140' : '220,180,255';
+  g.addColorStop(0, `rgba(${c},${.18 + rnd() * .2})`);
+  g.addColorStop(.7, `rgba(${c},${.08})`);
+  g.addColorStop(1, `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+}
+// tiny gold dust
+for (let i = 0; i < 420; i++) {
+  const x = rnd() * 1000, y = rnd() * 1414, r = .4 + rnd() * 1.4;
+  ctx.fillStyle = `rgba(255,${210 + rnd() * 40},${140 + rnd() * 60},${.35 + rnd() * .55})`;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+}
+// four-point star sparkles
+function star(x, y, s, a) {
+  ctx.save(); ctx.translate(x, y); ctx.globalAlpha = a;
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, s * 1.6);
+  g.addColorStop(0, 'rgba(255,240,200,.8)'); g.addColorStop(1, 'rgba(255,240,200,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, s * 1.6, 0, 7); ctx.fill();
+  ctx.fillStyle = '#fff4d0';
+  ctx.beginPath();
+  ctx.moveTo(0, -s); ctx.quadraticCurveTo(0, 0, s, 0); ctx.quadraticCurveTo(0, 0, 0, s);
+  ctx.quadraticCurveTo(0, 0, -s, 0); ctx.quadraticCurveTo(0, 0, 0, -s); ctx.fill();
+  ctx.restore();
+}
+[[250, 95, 16], [760, 120, 13], [205, 245, 10], [820, 255, 18], [300, 1290, 9], [700, 1300, 11],
+ [60, 760, 12], [945, 820, 14], [140, 1040, 8], [870, 1050, 9], [935, 200, 10], [70, 220, 9]]
+  .forEach(([x, y, s]) => star(x, y, s, .95));
+for (let i = 0; i < 40; i++) {
+  const side = rnd() > .5;
+  const x = side ? 30 + rnd() * 120 : 850 + rnd() * 120, y = 120 + rnd() * 1180;
+  star(x, y, 2 + rnd() * 5, .5 + rnd() * .5);
+}
+// gold confetti strips along the sides
+for (let i = 0; i < 60; i++) {
+  const side = rnd() > .5;
+  const x = side ? 25 + rnd() * 140 : 835 + rnd() * 140, y = 150 + rnd() * 1150;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rnd() * 3.14);
+  ctx.fillStyle = rnd() > .4 ? `rgba(240,200,110,${.6 + rnd() * .4})` : `rgba(200,160,240,${.5 + rnd() * .4})`;
+  ctx.fillRect(-4, -1.5, 8 + rnd() * 6, 3);
+  ctx.restore();
+}
+document.fonts.ready.then(() => document.body.dataset.ready = '1');
+</script>
+</body>
+</html>
