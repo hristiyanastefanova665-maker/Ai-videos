@@ -10,7 +10,7 @@
 
 :root {
   --ink: #f5ece0;
-  --gold: linear-gradient(100deg, #c8933a 0%, #f2d38a 25%, #fff3cf 45%, #e2b65e 65%, #f6dc98 82%, #c8933a 100%);
+  --gold: linear-gradient(100deg, #7d5216 0%, #b48430 25%, #d6aa50 45%, #a5762a 65%, #c4953c 82%, #7d5216 100%);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { width: 1000px; height: 1414px; background: var(--ink); overflow: hidden; }
@@ -19,43 +19,43 @@ html, body { width: 1000px; height: 1414px; background: var(--ink); overflow: hi
 
 /* the photo, full width; only the empty floor below the shoes runs off the bottom edge */
 .photo {
-  position: absolute; left: 0; top: 150px; width: 1000px; height: 1334px;
+  position: absolute; left: 20px; top: 200px; width: 960px; height: 1280px;
   background: url(assets/family.png) center / 100% 100% no-repeat;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 60px);
-          mask-image: linear-gradient(180deg, transparent 0, #000 60px);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, transparent 40px, #000 140px);
+          mask-image: linear-gradient(180deg, transparent 0, transparent 40px, #000 140px);
 }
 /* upward extension: the photo's own top edge (wall, slats, balloons) continued and softened */
-#ext { position: absolute; left: 0; top: 0; width: 1000px; height: 260px; }
+#ext { position: absolute; inset: 0; width: 1000px; height: 1414px; }
 /* gentle warm shading so the text reads; fades out above the heads */
 .shade-top {
-  position: absolute; inset: 0 0 auto 0; height: 330px;
+  position: absolute; inset: 0 0 auto 0; height: 360px;
   background:
-    radial-gradient(ellipse 52% 70px at 50% 262px, rgba(32, 17, 9, .75), rgba(32, 17, 9, 0)),
-    linear-gradient(180deg, rgba(40, 22, 12, .78) 0, rgba(40, 22, 12, .72) 230px, rgba(40, 22, 12, .45) 290px, rgba(40, 22, 12, 0) 335px);
+    radial-gradient(ellipse 62% 110px at 50% 270px, rgba(255, 250, 242, .55), rgba(255, 250, 242, 0)),
+    linear-gradient(180deg, rgba(252, 246, 236, .62) 0, rgba(252, 246, 236, .5) 250px, rgba(252, 246, 236, .25) 310px, rgba(252, 246, 236, 0) 345px);
 }
 #fx { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 /* ---------- all text together, large, above the family ---------- */
-.text { position: absolute; left: 0; right: 0; top: 8px; text-align: center; z-index: 5; }
+.text { position: absolute; left: 0; right: 0; top: 18px; text-align: center; z-index: 5; }
 .line1 {
   font-family: "Cormorant"; font-weight: 600; font-size: 52px; letter-spacing: 1.5px; line-height: 1;
-  color: #fff8ec; margin-bottom: 10px; text-shadow: 0 2px 10px rgba(30, 15, 8, .85), 0 0 2px rgba(30, 15, 8, .6);
+  color: #4a2a5c; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255, 250, 240, .9), 0 0 3px rgba(255, 250, 240, .9);
 }
 .name {
   display: inline-block; font-family: "GreatVibes"; font-size: 142px; line-height: .95;
   padding: 50px 70px 60px; margin: -50px 0 -60px;
   background: var(--gold); -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 2px rgba(40, 20, 10, .7)) drop-shadow(0 4px 10px rgba(30, 15, 8, .8));
+  filter: drop-shadow(0 0 2px rgba(255, 250, 240, .95)) drop-shadow(0 0 10px rgba(255, 250, 240, .8));
 }
 .wish {
   margin-top: 0; font-family: "Cormorant"; font-style: italic; font-weight: 600; font-size: 58px; line-height: 1; font-weight: 700;
-  color: #fffaf0; text-shadow: 0 0 3px rgba(25, 12, 5, 1), 0 0 10px rgba(25, 12, 5, .95), 0 0 24px rgba(25, 12, 5, .85), 0 3px 6px rgba(25, 12, 5, .9);
+  color: #3a1d48; text-shadow: 0 0 3px rgba(255, 250, 240, 1), 0 0 12px rgba(255, 250, 240, .95), 0 0 26px rgba(255, 250, 240, .8);
 }
 </style>
 </head>
 <body>
 <div class="poster">
-  <canvas id="ext" width="1000" height="260"></canvas>
+  <canvas id="ext" width="1000" height="1414"></canvas>
   <div class="photo"></div>
   <div class="shade-top"></div>
   <canvas id="fx" width="2000" height="2828"></canvas>
@@ -84,14 +84,27 @@ function star(x, y, s, a) {
   ctx.restore();
 }
 // sparkles kept clear of the text and of every face
-[[70, 50, 8], [930, 50, 8]]
+[]
   .forEach(([x, y, s]) => star(x, y, s, .9));
 const img = new Image();
 img.onload = () => {
   const e = document.getElementById('ext').getContext('2d');
-  e.filter = 'blur(14px)';
-  // top 26 source rows (~24px on the poster) stretched up to fill the space above the photo
-  e.drawImage(img, 0, 0, 1086, 26, -30, -30, 1060, 320);
+  e.filter = 'blur(16px) brightness(1.08)';
+  // the photo's own top rows stretched upward, then the whole photo (blurred) under the sharp one
+  e.drawImage(img, 0, 0, 1086, 30, -40, -40, 1080, 290);
+  e.drawImage(img, 0, 0, 1086, 1448, 20, 200, 960, 1280);
+  // side edges continued by a few pixels
+  // side edges: the outermost pixel columns continued sharply (no haze)
+  e.filter = 'none';
+  const oc = document.createElement('canvas'); oc.width = 1000; oc.height = 1414;
+  const o = oc.getContext('2d');
+  o.drawImage(img, 0, 0, 10, 1448, 0, 200, 21, 1280);
+  o.drawImage(img, 1076, 0, 10, 1448, 979, 200, 21, 1280);
+  o.globalCompositeOperation = 'destination-in';
+  const gm = o.createLinearGradient(0, 240, 0, 340);
+  gm.addColorStop(0, 'rgba(0,0,0,0)'); gm.addColorStop(1, 'rgba(0,0,0,1)');
+  o.fillStyle = gm; o.fillRect(0, 0, 1000, 1414);
+  e.drawImage(oc, 0, 0);
   document.fonts.ready.then(() => document.body.dataset.ready = '1');
 };
 img.src = 'assets/family.png';
