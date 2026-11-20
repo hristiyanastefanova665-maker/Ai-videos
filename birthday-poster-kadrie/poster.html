@@ -9,56 +9,49 @@
 @font-face { font-family: "Cormorant"; src: url(fonts/CormorantGaramond-Italic.ttf); font-style: italic; font-weight: 300 700; }
 
 :root {
-  --ink: #f5ece0;
-  --gold: linear-gradient(100deg, #5e3c0c 0%, #94661f 25%, #b98a35 45%, #87591a 65%, #a6772a 82%, #5e3c0c 100%);
+  --cream: #fbf5ec;
+  --ink: #24102e;
+  --gold: linear-gradient(100deg, #6e470e 0%, #9c6c1c 30%, #b4842c 50%, #8e5f16 70%, #6e470e 100%);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 1000px; height: 1414px; background: var(--ink); overflow: hidden; }
+html, body { width: 1000px; height: 1414px; background: var(--cream); overflow: hidden; }
+.poster { position: relative; width: 1000px; height: 1414px; overflow: hidden; background: var(--cream); }
 
-.poster { position: relative; width: 1000px; height: 1414px; overflow: hidden; background: #6b4a33; }
-
-/* the photo, full width; only the empty floor below the shoes runs off the bottom edge */
+/* geometry: photo scale 0.8 -> 870 x 1159, top 320; shoes end at ~1412 */
 .photo {
-  position: absolute; left: 20px; top: 200px; width: 960px; height: 1280px;
+  position: absolute; left: 100px; top: 320px; width: 870px; height: 1159px;
   background: url(assets/family.png) center / 100% 100% no-repeat;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, transparent 40px, #000 140px);
-          mask-image: linear-gradient(180deg, transparent 0, transparent 40px, #000 140px);
 }
-/* upward extension: the photo's own top edge (wall, slats, balloons) continued and softened */
-#ext { position: absolute; inset: 0; width: 1000px; height: 1414px; }
-/* gentle warm shading so the text reads; fades out above the heads */
-.shade-top {
-  position: absolute; inset: 0 0 auto 0; height: 360px;
-  background:
-    radial-gradient(ellipse 60% 120px at 50% 265px, rgba(255, 251, 244, .7), rgba(255, 251, 244, 0)),
-    linear-gradient(180deg, rgba(253, 248, 240, .86) 0, rgba(253, 248, 240, .8) 230px, rgba(253, 248, 240, .5) 300px, rgba(253, 248, 240, 0) 348px);
-}
-#fx { position: absolute; inset: 0; width: 100%; height: 100%; }
+#sides { position: absolute; inset: 0; width: 1000px; height: 1414px; }
 
-/* ---------- all text together, large, above the family ---------- */
-.text { position: absolute; left: 0; right: 0; top: 18px; text-align: center; z-index: 5; }
+/* solid champagne panel for the text; melts into the wall above the heads */
+.panel {
+  position: absolute; inset: 0 0 auto 0; height: 400px;
+  background: linear-gradient(180deg, var(--cream) 0, var(--cream) 340px, rgba(251, 245, 236, 0) 400px);
+}
+
+.text { position: absolute; left: 0; right: 0; top: 14px; text-align: center; z-index: 5; }
 .line1 {
-  font-family: "Cormorant"; font-weight: 700; font-size: 54px; letter-spacing: 1.5px; line-height: 1;
-  color: #2e1538; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255, 250, 240, .9), 0 0 3px rgba(255, 250, 240, .9);
+  font-family: "Cormorant"; font-weight: 700; font-size: 60px; letter-spacing: 1px; line-height: 1;
+  color: var(--ink);
 }
 .name {
-  display: inline-block; font-family: "GreatVibes"; font-size: 146px; line-height: .95; -webkit-text-stroke: 1.2px #6b4512;
-  padding: 50px 70px 60px; margin: -50px 0 -60px;
+  display: inline-block; font-family: "GreatVibes"; font-size: 152px; line-height: .95;
+  padding: 40px 70px 50px; margin: -36px 0 -50px;
   background: var(--gold); -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 2px rgba(255, 250, 240, .95)) drop-shadow(0 0 10px rgba(255, 250, 240, .8));
+  -webkit-text-stroke: 1.6px #6e470e;
 }
 .wish {
-  margin-top: 0; font-family: "Cormorant"; font-style: italic; font-weight: 600; font-size: 58px; line-height: 1; font-weight: 700;
-  color: #2e1538; text-shadow: 0 0 3px rgba(255, 250, 240, 1), 0 0 12px rgba(255, 250, 240, .95), 0 0 26px rgba(255, 250, 240, .8);
+  margin-top: 2px; font-family: "Cormorant"; font-style: italic; font-weight: 700; font-size: 60px; line-height: 1;
+  color: var(--ink);
 }
 </style>
 </head>
 <body>
 <div class="poster">
-  <canvas id="ext" width="1000" height="1414"></canvas>
+  <canvas id="sides" width="1000" height="1414"></canvas>
   <div class="photo"></div>
-  <div class="shade-top"></div>
-  <canvas id="fx" width="2000" height="2828"></canvas>
+  <div class="panel"></div>
 
   <div class="text">
     <div class="line1">Честит рожден ден,</div>
@@ -68,43 +61,17 @@ html, body { width: 1000px; height: 1414px; background: var(--ink); overflow: hi
 </div>
 
 <script>
-let seed = 11;
-const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-const cv = document.getElementById('fx'), ctx = cv.getContext('2d');
-ctx.scale(2, 2);
-
-function star(x, y, s, a) {
-  ctx.save(); ctx.translate(x, y); ctx.globalAlpha = a;
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, s * 1.8);
-  g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, s * 1.8, 0, 7); ctx.fill();
-  ctx.fillStyle = '#c29a4a'; ctx.beginPath();
-  ctx.moveTo(0, -s); ctx.quadraticCurveTo(0, 0, s, 0); ctx.quadraticCurveTo(0, 0, 0, s);
-  ctx.quadraticCurveTo(0, 0, -s, 0); ctx.quadraticCurveTo(0, 0, 0, -s); ctx.fill();
-  ctx.restore();
-}
-// sparkles kept clear of the text and of every face
-[]
-  .forEach(([x, y, s]) => star(x, y, s, .9));
+// The photo is narrower than the poster: continue its outer edges by mirroring
+// the last strip of wall (left) and balloons (right). People are never mirrored.
 const img = new Image();
 img.onload = () => {
-  const e = document.getElementById('ext').getContext('2d');
-  e.filter = 'blur(16px) brightness(1.08)';
-  // the photo's own top rows stretched upward, then the whole photo (blurred) under the sharp one
-  e.drawImage(img, 0, 0, 1086, 30, -40, -40, 1080, 290);
-  e.drawImage(img, 0, 0, 1086, 1448, 20, 200, 960, 1280);
-  // side edges continued by a few pixels
-  // side edges: the outermost pixel columns continued sharply (no haze)
-  e.filter = 'none';
-  const oc = document.createElement('canvas'); oc.width = 1000; oc.height = 1414;
-  const o = oc.getContext('2d');
-  o.drawImage(img, 0, 0, 10, 1448, 0, 200, 21, 1280);
-  o.drawImage(img, 1076, 0, 10, 1448, 979, 200, 21, 1280);
-  o.globalCompositeOperation = 'destination-in';
-  const gm = o.createLinearGradient(0, 240, 0, 340);
-  gm.addColorStop(0, 'rgba(0,0,0,0)'); gm.addColorStop(1, 'rgba(0,0,0,1)');
-  o.fillStyle = gm; o.fillRect(0, 0, 1000, 1414);
-  e.drawImage(oc, 0, 0);
+  const c = document.getElementById('sides').getContext('2d');
+  const top = 320, h = 1159;
+  // left: the plain white wall at the photo's edge, widened
+  c.drawImage(img, 0, 0, 40, 1448, 0, top, 101, h);
+  // right: a thin mirrored strip of the balloon garland
+  c.save(); c.translate(970, 0); c.scale(-1, 1);
+  c.drawImage(img, 1086 - 38, 0, 38, 1448, -30, top, 30, h); c.restore();
   document.fonts.ready.then(() => document.body.dataset.ready = '1');
 };
 img.src = 'assets/family.png';
