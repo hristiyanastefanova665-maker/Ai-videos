@@ -1,0 +1,237 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Golf Mk6 Reel</title>
+<style>
+  html,body{margin:0;background:#000;overflow:hidden}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#d9a57c}
+  #scenes{position:absolute;inset:0}
+  #grain{width:1180px;height:2020px}
+  .scene{position:absolute;inset:0;overflow:hidden;visibility:hidden}
+  .scene img,.scene .box{position:absolute;left:0;top:0;will-change:transform}
+  .bg{width:1080px;height:1920px}
+  .half{position:absolute;left:0;width:1080px;height:960px;overflow:hidden}
+  .glow{filter:drop-shadow(0 0 18px rgba(255,190,60,.9)) drop-shadow(0 0 50px rgba(255,150,30,.6))}
+  .soft{filter:drop-shadow(0 30px 30px rgba(60,25,5,.45))}
+  #grade{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+    background:linear-gradient(180deg,rgba(255,170,90,.55),rgba(255,140,60,.35) 55%,rgba(120,50,20,.5))}
+  #vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 85% at 50% 48%,transparent 60%,rgba(30,10,0,.4))}
+  #flash{position:absolute;inset:0;background:#fff4e0;opacity:0;pointer-events:none}
+  #grain{position:absolute;inset:-50px;pointer-events:none;opacity:.10;mix-blend-mode:overlay}
+  .flare{position:absolute;width:900px;height:900px;border-radius:50%;pointer-events:none;mix-blend-mode:screen;
+    background:radial-gradient(circle,rgba(255,250,220,1) 0,rgba(255,200,110,.75) 6%,rgba(255,150,60,.25) 25%,transparent 60%)}
+  .dot{position:absolute;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,rgba(120,255,140,.8),transparent 70%);mix-blend-mode:screen}
+  #end{position:absolute;inset:0;background:#7d7f80;opacity:0;mix-blend-mode:saturation}
+</style></head>
+<body>
+<div id="stage">
+  <div id="scenes"></div>
+  <div id="grade"></div><div id="vig"></div>
+  <canvas id="grain" width="590" height="1010"></canvas>
+  <div id="end"></div>
+  <div id="flash"></div>
+</div>
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const A = 'assets/gen/';
+const S = document.getElementById('scenes');
+const tl = gsap.timeline({paused:true});
+const CAR_AR = 644/1017;
+
+function scene(){ const d=document.createElement('div'); d.className='scene'; S.appendChild(d); return d; }
+function half(sc, top){ const d=document.createElement('div'); d.className='half'; d.style.top=(top?0:960)+'px'; sc.appendChild(d); return d; }
+function img(parent, src, o={}){
+  const i=document.createElement('img'); i.src=A+src; if(o.cls) i.className=o.cls;
+  if(o.w) i.style.width=o.w+'px';
+  parent.appendChild(i);
+  gsap.set(i,{xPercent:-50,yPercent:-50,x:o.x??540,y:o.y??960,scale:o.s??1,rotation:o.r??0,opacity:o.o??1,scaleX:o.fx?-(o.s??1):undefined});
+  return i;
+}
+function bg(parent,o={}){ return img(parent,'bg.jpg',{w:1080,x:540,y:o.y??960,s:o.s??1.05}); }
+function shadow(parent,x,y,w){ return img(parent,'shadow.png',{w,x,y}); }
+// show a scene between t0 and t1
+function show(sc,t0,t1){ tl.set(sc,{visibility:'visible'},t0); tl.set(sc,{visibility:'hidden'},t1); }
+function flash(t,a=.85,d=.22){ tl.fromTo('#flash',{opacity:a},{opacity:0,duration:d,ease:'power2.out'},t); }
+function shake(t,el='#scenes',amt=14){ tl.fromTo(el,{x:amt,y:-amt*.6},{x:0,y:0,duration:.25,ease:'elastic.out(1,.3)'},t); }
+const E='power3.out', IO='power2.inOut';
+
+/* ---------- S1 0 – 1.51 : neon grille on top, hero car below ---------- */
+{ const sc=scene(); show(sc,0,1.51);
+  bg(sc,{y:1000});
+  const sh=shadow(sc,540,1470,980);
+  const car=img(sc,'car.png',{w:980,x:540,y:1230,cls:'soft'});
+  const top=half(sc,true); top.style.height='700px';
+  bg(top,{y:700,s:1.1});
+  const ng=img(top,'n_grille.png',{w:1500,x:540,y:330,cls:'glow'});
+  const dg=img(top,'d_grille.png',{w:1500,x:540,y:330,o:0});
+  tl.fromTo(top,{y:-700},{y:0,duration:.55,ease:E},0);
+  tl.fromTo([ng,dg],{scale:1.25,rotation:-6},{scale:1,rotation:0,duration:1.5,ease:'power2.out'},0);
+  tl.to(dg,{opacity:1,duration:.3},0.95);
+  tl.to(ng,{opacity:0,duration:.3},1.1);
+  tl.fromTo([car,sh],{scale:.82},{scale:1,duration:1.5,ease:'power2.out'},0);
+  flash(0,1,.35);
+}
+/* ---------- S2 1.51 – 3.0 : car far on top, neon car slides in below ---------- */
+{ const sc=scene(); show(sc,1.51,3.0);
+  bg(sc,{y:900,s:1.15});
+  const far=img(sc,'car_mirror.png',{w:560,x:560,y:700,cls:'soft'});
+  const nc=img(sc,'car_neon.png',{w:1500,x:420,y:1500,cls:'glow'});
+  const rc=img(sc,'car.png',{w:1500,x:420,y:1500,o:0});
+  tl.fromTo(far,{x:420,scale:.9},{x:620,scale:1.05,duration:1.5,ease:'none'},1.51);
+  tl.fromTo([nc,rc],{x:-500,y:1700,rotation:8},{x:440,y:1480,rotation:0,duration:.6,ease:E},1.51);
+  tl.to([nc,rc],{x:500,duration:.9,ease:'none'},2.11);
+  tl.to(rc,{opacity:1,duration:.35},2.3);
+  tl.to(nc,{opacity:0,duration:.3},2.55);
+  shake(1.51); flash(1.51,.6,.15);
+}
+/* ---------- S3 3.0 – 4.5 : headlight cutout on top, car below ---------- */
+{ const sc=scene(); show(sc,3.0,4.5);
+  bg(sc,{y:960});
+  const sh=shadow(sc,540,1560,900);
+  const car=img(sc,'car.png',{w:900,x:540,y:1340,cls:'soft'});
+  const hl=img(sc,'d_headlight.png',{w:1500,x:540,y:470,cls:'soft'});
+  const nh=img(sc,'n_headlight.png',{w:1500,x:540,y:470,cls:'glow'});
+  tl.fromTo([hl,nh],{x:-300,rotation:-14,scale:1.2},{x:560,rotation:-4,scale:1,duration:.55,ease:E},3.0);
+  tl.to([hl,nh],{x:600,rotation:0,scale:1.06,duration:.95,ease:'none'},3.55);
+  tl.fromTo(nh,{opacity:1},{opacity:0,duration:.35},3.4);
+  tl.fromTo([car,sh],{scale:.92},{scale:1.02,duration:1.5,ease:'none'},3.0);
+  shake(3.0,undefined,18); flash(3.0,.5,.15);
+}
+/* ---------- S4 4.5 – 6.03 : car top, neon plate/badge strip bottom ---------- */
+{ const sc=scene(); show(sc,4.5,6.03);
+  bg(sc,{y:860,s:1.1});
+  const sh=shadow(sc,520,1120,950);
+  const car=img(sc,'car_mirror.png',{w:950,x:520,y:900,cls:'soft'});
+  const bot=half(sc,false); bot.style.top='1260px'; bot.style.height='660px';
+  bg(bot,{y:200,s:1.2});
+  const np=img(bot,'n_plate.png',{w:1300,x:540,y:330,cls:'glow'});
+  const dp=img(bot,'d_plate.png',{w:1300,x:540,y:330,o:0});
+  tl.fromTo(bot,{y:660},{y:0,duration:.45,ease:E},4.5);
+  tl.fromTo([np,dp],{scale:1.3},{scale:1,duration:1.5,ease:'power2.out'},4.5);
+  tl.to(dp,{opacity:1,duration:.3},5.25); tl.to(np,{opacity:0,duration:.3},5.4);
+  tl.fromTo([car,sh],{scale:1},{scale:1.08,x:'+=30',duration:1.5,ease:'none'},4.5);
+  shake(5.25,undefined,10);
+}
+/* ---------- S5 6.03 – 7.0 : wide shot, car small, push in ---------- */
+{ const sc=scene(); show(sc,6.03,7.0);
+  const b=bg(sc,{y:960,s:1.0});
+  const sh=shadow(sc,540,1260,420);
+  const car=img(sc,'car.png',{w:430,x:540,y:1160,cls:'soft'});
+  const dust=document.createElement('div'); dust.className='box'; Object.assign(dust.style,{width:'700px',height:'300px',borderRadius:'50%',background:'radial-gradient(ellipse,rgba(230,180,130,.7),transparent 65%)',filter:'blur(20px)'}); sc.appendChild(dust);
+  gsap.set(dust,{xPercent:-50,yPercent:-50,x:300,y:1240});
+  tl.from([car,sh],{x:'-=260',duration:.97,ease:'power2.out'},6.03);
+  tl.fromTo(dust,{opacity:.9,scale:.6},{opacity:0,scale:1.6,x:200,duration:.97},6.03);
+  tl.fromTo(sc,{scale:1},{scale:1.12,transformOrigin:'50% 60%',duration:.97,ease:'none'},6.03);
+  flash(6.03,.9,.3);
+}
+/* ---------- S6 7.0 – 8.3 : huge body close-up, vent-shaped mask reveals car ---------- */
+{ const sc=scene(); show(sc,7.0,8.3);
+  bg(sc);
+  const big=img(sc,'car.png',{w:3600,x:700,y:1000});
+  const win=document.createElement('div'); win.className='box'; Object.assign(win.style,{width:'1080px',height:'1920px',left:0,top:0});
+  sc.appendChild(win);
+  const ic=document.createElement('div'); ic.className='box'; Object.assign(ic.style,{width:'1080px',height:'1920px'}); win.appendChild(ic);
+  bg(ic,{s:1.1}); shadow(ic,565,1100,620); img(ic,'car_mirror.png',{w:620,x:565,y:950,cls:'soft'});
+  gsap.set(ic,{transformOrigin:'565px 930px'});
+  const poly=(p)=>`polygon(${p.map(([x,y])=>x+'px '+y+'px').join(',')})`;
+  const st={a:0}; const small=[[470,820],[640,780],[700,1000],[430,1080]], full=[[-400,-300],[1500,-300],[1500,2300],[-400,2300]];
+  const upd=()=>{ const k=st.a; win.style.clipPath=poly(small.map((p,i)=>[p[0]+(full[i][0]-p[0])*k,p[1]+(full[i][1]-p[1])*k])); };
+  upd();
+  tl.fromTo(big,{x:900,y:1150,rotation:-10,scale:1},{x:600,y:950,rotation:4,scale:1.15,duration:1.3,ease:'none'},7.0);
+  tl.fromTo(win,{opacity:0},{opacity:1,duration:.2},7.15);
+  tl.fromTo(st,{a:0},{a:1,duration:.55,ease:'power3.in',onUpdate:upd},7.75);
+  tl.fromTo(ic,{scale:.42},{scale:.6,duration:.6,ease:'none'},7.15);
+  tl.to(ic,{scale:1.15,duration:.55,ease:'power3.in'},7.75);
+}
+/* ---------- S7 8.3 – 10.52 : wheel close-up with sun flare, wheel-ring reveal ---------- */
+{ const sc=scene(); show(sc,8.3,10.52);
+  bg(sc,{y:700,s:1.3});
+  const wh=img(sc,'d_wheel.png',{w:1250,x:540,y:1100,cls:'soft'});
+  const fl=document.createElement('div'); fl.className='flare'; sc.appendChild(fl); gsap.set(fl,{xPercent:-50,yPercent:-50,x:860,y:560});
+  const dot=document.createElement('div'); dot.className='dot'; sc.appendChild(dot); gsap.set(dot,{x:300,y:1450});
+  const win=document.createElement('div'); win.className='box'; Object.assign(win.style,{width:'1080px',height:'1920px'}); sc.appendChild(win);
+  bg(win,{s:1.1}); shadow(win,540,1250,760); const ic=img(win,'car.png',{w:760,x:540,y:1080,cls:'soft'});
+  const ring=document.createElement('div'); ring.className='box'; Object.assign(ring.style,{width:'200px',height:'200px',borderRadius:'50%',border:'40px solid #2a2522',boxShadow:'0 0 0 6px rgba(255,190,90,.6), inset 0 0 30px #000'}); sc.appendChild(ring);
+  const st={r:0}; const upd=()=>{ win.style.clipPath=`circle(${st.r}px at 560px 1180px)`; gsap.set(ring,{width:st.r*2+80,height:st.r*2+80}); };
+  gsap.set(ring,{xPercent:-50,yPercent:-50,x:560,y:1180,opacity:0}); upd();
+  tl.fromTo(wh,{x:640,scale:1.15},{x:470,scale:1,duration:1.4,ease:'none'},8.3);
+  tl.fromTo(fl,{x:980,opacity:.6,scale:.8},{x:720,opacity:1,scale:1.1,duration:2.2,ease:'none'},8.3);
+  tl.fromTo(dot,{x:360,y:1500},{x:200,y:1350,duration:2.2,ease:'none'},8.3);
+  tl.set(ring,{opacity:1},9.65);
+  tl.fromTo(st,{r:0},{r:260,duration:.35,ease:'power2.out',onUpdate:upd},9.65);
+  tl.to(st,{r:1500,duration:.45,ease:'power3.in',onUpdate:upd},10.07);
+  tl.to(ring,{opacity:0,duration:.1},10.42);
+  tl.fromTo(ic,{scale:.75},{scale:1.05,duration:.9,ease:'none'},9.65);
+}
+/* ---------- S8 10.52 – 12.0 : car top, side mirror cutout rises from below ---------- */
+{ const sc=scene(); show(sc,10.52,12.0);
+  bg(sc,{y:800,s:1.12});
+  const sh=shadow(sc,540,1010,960); const car=img(sc,'car.png',{w:960,x:540,y:790,cls:'soft'});
+  const mr=img(sc,'d_mirror.png',{w:1350,x:520,y:1520,cls:'soft'});
+  const rw=img(sc,'d_rearwheel.png',{w:620,x:900,y:1600,cls:'soft'});
+  tl.fromTo(mr,{y:2500,rotation:10},{y:1500,rotation:0,duration:.5,ease:E},10.52);
+  tl.fromTo(rw,{y:2600},{y:1650,duration:.6,ease:E},10.62);
+  tl.to([mr,rw],{y:'-=70',duration:.88,ease:'none'},11.12);
+  tl.fromTo([car,sh],{scale:1.06},{scale:.97,duration:1.48,ease:'none'},10.52);
+  shake(10.52,undefined,16); flash(10.52,.7,.18);
+}
+/* ---------- S9 12.0 – 13.51 : car top, glowing badge ring (blue -> gold) ---------- */
+{ const sc=scene(); show(sc,12.0,13.51);
+  bg(sc,{y:880,s:1.12});
+  const sh=shadow(sc,560,1080,1050); const car=img(sc,'car_mirror.png',{w:1050,x:560,y:830,cls:'soft'});
+  const pl=img(sc,'d_plate.png',{w:1300,x:540,y:1640,cls:'soft'});
+  const nb=img(sc,'n_badge.png',{w:640,x:330,y:1290,cls:'glow'});
+  tl.fromTo(nb,{x:-300,rotation:-90,filter:'hue-rotate(160deg) saturate(2) drop-shadow(0 0 30px #3cf)'},
+    {x:330,rotation:0,duration:.5,ease:E},12.0);
+  tl.to(nb,{filter:'hue-rotate(0deg) saturate(1) drop-shadow(0 0 30px #fb3)',duration:.4},12.7);
+  tl.to(nb,{scale:1.08,x:350,duration:.8,ease:'none'},12.7);
+  tl.fromTo(pl,{y:2200},{y:1640,duration:.5,ease:E},12.05);
+  tl.from([car,sh],{x:'+=80',duration:1.5,ease:'power1.out'},12.0);
+}
+/* ---------- S10 13.51 – 15.0 : moody cockpit through the windscreen ---------- */
+{ const sc=scene(); show(sc,13.51,15.0);
+  sc.style.background='#120c08';
+  sc.style.background='radial-gradient(ellipse at 60% 20%,#5a3418,#120c08 70%)';
+  const ph=img(sc,'car.png',{w:3660,x:505,y:1665});
+  ph.style.filter='brightness(.8) contrast(1.25) saturate(1.1)';
+  tl.fromTo(ph,{x:440,y:1760,rotation:-5,scale:1.06},{x:520,y:1640,rotation:-1,scale:1,duration:1.49,ease:'none'},13.51);
+  flash(13.51,.9,.25);
+}
+/* ---------- S11 15.0 – 16.51 : two cars face each other ---------- */
+{ const sc=scene(); show(sc,15.0,16.51);
+  bg(sc,{y:960,s:1.1});
+  const s1=shadow(sc,250,1350,900), s2=shadow(sc,840,1180,700);
+  const a=img(sc,'car_mirror.png',{w:700,x:840,y:1010,cls:'soft'});
+  const b=img(sc,'car.png',{w:1000,x:260,y:1130,cls:'soft'});
+  tl.from([a,s2],{x:'+=700',duration:.55,ease:E},15.0);
+  tl.from([b,s1],{x:'-=900',duration:.6,ease:E},15.15);
+  tl.fromTo(sc,{scale:1.0},{scale:1.08,transformOrigin:'50% 60%',duration:1.51,ease:'none'},15.0);
+  shake(15.15,undefined,12);
+}
+/* ---------- S12 16.51 – 18.1 : stacked cutouts, then grey fade out ---------- */
+{ const sc=scene(); show(sc,16.51,18.2);
+  bg(sc,{y:960,s:1.1});
+  const c3=img(sc,'car.png',{w:620,x:540,y:1500,cls:'soft'});
+  const c2=img(sc,'car_neon.png',{w:820,x:540,y:1080,cls:'glow'});
+  const c1=img(sc,'car_mirror.png',{w:900,x:540,y:640,cls:'soft'});
+  tl.fromTo(c1,{y:-500},{y:640,duration:.45,ease:E},16.51);
+  tl.fromTo(c2,{x:1600},{x:540,duration:.45,ease:E},16.7);
+  tl.fromTo(c3,{y:2400},{y:1500,duration:.45,ease:E},16.9);
+  tl.to([c1,c2,c3],{scale:1.06,duration:1.2,ease:'none'},16.96);
+  tl.to(c2,{opacity:.85,duration:.2},17.3);
+  tl.to('#end',{opacity:1,duration:.6},17.4);
+  tl.to('#stage',{filter:'brightness(.55)',duration:.6},17.5);
+  flash(16.51,.8,.2);
+}
+tl.to({}, {duration:.01}, 18.1);
+
+/* grain */
+const gc=document.getElementById('grain').getContext('2d');
+function grain(seed){ const im=gc.createImageData(590,1010); let s=seed*9301+49297;
+  for(let i=0;i<im.data.length;i+=4){ s=(s*1103515245+12345)&0x7fffffff; const v=s%255; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=255; } gc.putImageData(im,0,0); }
+
+window.seek = t => { tl.seek(t,false); grain(Math.floor(t*30)); };
+Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>i.onload=i.onerror=r))).then(()=>{ window.seek(0); window.ready=true; });
+
+if(location.hash==='#play'){ const au=new Audio('assets/audio.mp3'); document.body.onclick=()=>{ au.play(); const t0=performance.now();
+  (function f(){ const t=(performance.now()-t0)/1000; window.seek(t); if(t<18.1) requestAnimationFrame(f); })(); }; }
+</script>
+</body></html>
