@@ -9,8 +9,8 @@
 @font-face { font-family: "Cormorant"; src: url(fonts/CormorantGaramond-Italic.ttf); font-style: italic; font-weight: 300 700; }
 
 :root {
-  --ink: #22102b;
-  --gold: linear-gradient(100deg, #b07a26 0%, #f0cf7c 22%, #fff4cf 40%, #dcae55 60%, #f7dd96 80%, #b07a26 100%);
+  --ink: #f5ece0;
+  --gold: linear-gradient(100deg, #7d5216 0%, #b98a33 25%, #d9b05a 45%, #a8782a 65%, #c6973f 82%, #7d5216 100%);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { width: 1000px; height: 1414px; background: var(--ink); overflow: hidden; }
@@ -24,46 +24,48 @@ html, body { width: 1000px; height: 1414px; background: var(--ink); overflow: hi
   filter: blur(36px) brightness(.78) saturate(1.1);
 }
 .photo {
-  position: absolute; left: 110px; top: 374px; width: 780px; height: 1040px;
+  position: absolute; left: 130px; top: 427px; width: 740px; height: 987px;
   background: url(assets/family.png) center / 100% 100% no-repeat;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 70px, #000 710px, transparent 780px),
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 70px, #000 670px, transparent 740px),
                       linear-gradient(180deg, transparent 0, #000 110px);
   -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(90deg, transparent 0, #000 70px, #000 710px, transparent 780px),
+          mask-image: linear-gradient(90deg, transparent 0, #000 70px, #000 670px, transparent 740px),
                       linear-gradient(180deg, transparent 0, #000 110px);
           mask-composite: intersect;
 }
 /* side extensions: the photo's own edge strips, stretched and softened */
 .side {
-  position: absolute; top: 374px; width: 190px; height: 1040px;
-  background-image: url(assets/family.png); background-size: 4900px 1040px; background-repeat: no-repeat;
+  position: absolute; top: 427px; width: 210px; height: 987px;
+  background-image: url(assets/family.png); background-size: 4650px 987px; background-repeat: no-repeat;
   filter: blur(10px);
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 110px); mask-image: linear-gradient(180deg, transparent 0, #000 110px);
 }
 .side.l { left: -10px; background-position: 0 0; }
-.side.r { left: 820px; width: 180px; background-size: 1716px 1040px; background-position: -1494px 0;
+.side.r { left: 800px; width: 200px; background-size: 1850px 987px; background-position: -1597px 0;
   transform: scaleX(-1); filter: blur(5px) brightness(.97); }
 .shade-top {
-  position: absolute; inset: 0 0 auto 0; height: 520px;
-  background: linear-gradient(180deg, rgba(34, 16, 43, 1) 0, rgba(34, 16, 43, .92) 190px,
-                              rgba(34, 16, 43, .6) 340px, rgba(34, 16, 43, 0) 470px);
+  position: absolute; inset: 0 0 auto 0; height: 560px;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255, 253, 248, .9), transparent 75%),
+    linear-gradient(180deg, #f7efe4 0, #f3e7d7 400px, rgba(240, 226, 208, .8) 450px, rgba(240, 226, 208, 0) 540px);
 }
 #fx { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 /* ---------- all text together, large, above the family ---------- */
-.text { position: absolute; left: 0; right: 0; top: 34px; text-align: center; z-index: 5; }
+.text { position: absolute; left: 0; right: 0; top: 22px; text-align: center; z-index: 5; }
 .line1 {
-  font-family: "Cormorant"; font-weight: 600; font-size: 66px; letter-spacing: 1.5px; line-height: 1.05;
-  color: #f8eedd; text-shadow: 0 2px 12px rgba(20, 6, 26, .8);
+  font-family: "Cormorant"; font-weight: 600; font-size: 64px; letter-spacing: 1.5px; line-height: 1.05;
+  color: #4a2a5c; margin-bottom: 26px;
 }
 .name {
-  display: inline-block; font-family: "GreatVibes"; font-size: 186px; line-height: 1.02; padding: 0 40px;
+  display: inline-block; font-family: "GreatVibes"; font-size: 180px; line-height: 1.02;
+  padding: 50px 70px 60px; margin: -50px 0 -60px;
   background: var(--gold); -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 16px rgba(255, 214, 140, .35)) drop-shadow(0 3px 5px rgba(20, 6, 26, .75));
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .9)) drop-shadow(0 4px 8px rgba(110, 75, 30, .25));
 }
 .wish {
-  margin-top: 4px; font-family: "Cormorant"; font-style: italic; font-weight: 600; font-size: 50px; line-height: 1.12;
-  color: #f8eedd; text-shadow: 0 2px 12px rgba(20, 6, 26, .9);
+  margin-top: 6px; font-family: "Cormorant"; font-style: italic; font-weight: 600; font-size: 66px; line-height: 1.08;
+  color: #4a2a5c;
 }
 </style>
 </head>
@@ -89,31 +91,23 @@ const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const cv = document.getElementById('fx'), ctx = cv.getContext('2d');
 ctx.scale(2, 2);
 
-// soft warm bokeh only in the dark top band (right side, beside the title)
-for (let i = 0; i < 18; i++) {
-  const x = rnd() > .5 ? 20 + rnd() * 140 : 840 + rnd() * 140, y = 30 + rnd() * 380, r = 5 + rnd() * 16;
-  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-  g.addColorStop(0, `rgba(255,220,160,${.2 + rnd() * .2})`); g.addColorStop(1, 'rgba(255,220,160,0)');
-  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
-}
-// fine gold dust in the top band
-for (let i = 0; i < 90; i++) {
-  const x = rnd() * 1000, y = rnd() * 420, r = .4 + rnd() * 1.2;
-  ctx.fillStyle = `rgba(255,${215 + rnd() * 30},${150 + rnd() * 60},${.3 + rnd() * .5})`;
+for (let i = 0; i < 60; i++) {
+  const x = rnd() > .5 ? 15 + rnd() * 150 : 835 + rnd() * 150, y = 20 + rnd() * 390, r = .5 + rnd() * 1.3;
+  ctx.fillStyle = `rgba(${185 + rnd() * 20},${140 + rnd() * 25},${60 + rnd() * 30},${.35 + rnd() * .4})`;
   ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
 }
 function star(x, y, s, a) {
   ctx.save(); ctx.translate(x, y); ctx.globalAlpha = a;
   const g = ctx.createRadialGradient(0, 0, 0, 0, 0, s * 1.8);
-  g.addColorStop(0, 'rgba(255,236,190,.75)'); g.addColorStop(1, 'rgba(255,236,190,0)');
+  g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, s * 1.8, 0, 7); ctx.fill();
-  ctx.fillStyle = '#fff3cf'; ctx.beginPath();
+  ctx.fillStyle = '#c29a4a'; ctx.beginPath();
   ctx.moveTo(0, -s); ctx.quadraticCurveTo(0, 0, s, 0); ctx.quadraticCurveTo(0, 0, 0, s);
   ctx.quadraticCurveTo(0, 0, -s, 0); ctx.quadraticCurveTo(0, 0, 0, -s); ctx.fill();
   ctx.restore();
 }
 // sparkles kept clear of the text and of every face
-[[80, 70, 11], [925, 60, 9], [140, 330, 7], [880, 320, 8]]
+[[70, 60, 9], [930, 60, 9], [80, 330, 6], [920, 330, 6]]
   .forEach(([x, y, s]) => star(x, y, s, .9));
 document.fonts.ready.then(() => document.body.dataset.ready = '1');
 </script>
