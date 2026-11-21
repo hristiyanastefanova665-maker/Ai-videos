@@ -1,0 +1,25 @@
+{
+  "name": "katana-bg",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bulgarian motion-graphics ad (1080x1920, 30fps) built with Remotion",
+  "scripts": {
+    "studio": "remotion studio src/index.ts --browser-executable=/opt/pw-browsers/chromium_headless_shell",
+    "render": "node render.mjs",
+    "render:vo": "node render.mjs --with-vo",
+    "stills": "node render.mjs --stills"
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "@fontsource/oswald": "5.3.0",
+    "@fontsource/unbounded": "5.3.0",
+    "@remotion/bundler": "4.0.545",
+    "@remotion/cli": "4.0.545",
+    "@remotion/renderer": "4.0.545",
+    "@types/react": "^19.3.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.545",
+    "typescript": "^7.0.2"
+  }
+}
